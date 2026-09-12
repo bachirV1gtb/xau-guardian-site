@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Formation — XAU Guardian</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0B0F1F; --panel:#131A2E; --panel-2:#1A2340; --line:#262F4D;
+    --violet:#8B7CF6; --violet-bright:#A99BFF;
+    --text:#E7E9F5; --muted:#8890AA; --green:#34D399; --red:#F87171;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;min-height:100vh;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;line-height:1.65;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+  a{color:var(--violet-bright);}
+  .wrap{max-width:720px;margin:0 auto;padding:0 24px;}
+  nav{border-bottom:1px solid var(--line);}
+  nav .wrap{height:66px;display:flex;align-items:center;justify-content:space-between;}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:1.02rem;}
+  .brand span{color:var(--muted);font-weight:400;font-size:0.85rem;}
+  a.back{color:var(--muted);text-decoration:none;font-size:0.9rem;}
+  a.back:hover{color:var(--violet-bright);}
+
+  main{padding:44px 0 80px;}
+  h1{font-size:1.7rem;font-weight:600;margin:0 0 8px;}
+  h2{font-size:1.25rem;font-weight:600;margin:44px 0 14px;}
+  h3{font-size:1.05rem;font-weight:600;margin:24px 0 8px;color:var(--violet-bright);}
+  p{color:var(--text);margin:0 0 14px;}
+  ul{margin:0 0 14px;padding-left:20px;}
+  li{margin-bottom:6px;}
+  .lead{color:var(--muted);font-size:1rem;}
+
+  .locked{margin-top:60px;text-align:center;padding:60px 30px;background:var(--panel);border:1px solid var(--line);border-radius:12px;}
+  .locked .emoji{font-size:2.4rem;}
+  .locked h2{margin-top:16px;font-size:1.4rem;}
+  .locked p{color:var(--muted);max-width:44ch;margin:12px auto 24px;}
+  .locked .btn{display:inline-flex;background:var(--violet);color:#0E1120;padding:13px 26px;border-radius:6px;text-decoration:none;font-weight:600;}
+  .locked .btn:hover{background:var(--violet-bright);}
+
+  .loading{margin-top:60px;text-align:center;color:var(--muted);}
+
+  .course{display:none;}
+  .course.show{display:block;}
+
+  .callout{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px 18px;margin:18px 0;font-size:0.92rem;color:var(--muted);}
+  .callout strong{color:var(--text);}
+
+  .module{border-top:1px solid var(--line);padding-top:8px;margin-top:36px;}
+  .module-tag{color:var(--muted);font-size:0.78rem;text-transform:uppercase;letter-spacing:0.03em;}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="brand">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 2 20 6v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-4Z" stroke="#8B7CF6" stroke-width="1.4"/></svg>
+      XAU Guardian <span>· formation</span>
+    </div>
+    <a class="back" href="dashboard.html">← Tableau de bord</a>
+  </div>
+</nav>
+
+<main>
+  <div class="wrap">
+
+    <div class="loading" id="loading">Vérification de votre accès…</div>
+
+    <div class="locked" id="locked" style="display:none;">
+      <div class="emoji">🔒</div>
+      <h2>Réservé aux Membres</h2>
+      <p>Cette formation complète sur les fondamentaux du trading est incluse dans l'abonnement Membre, avec un accès illimité aux outils du site.</p>
+      <a class="btn" href="tarifs.html">Voir l'abonnement Membre</a>
+    </div>
+
+    <article class="course" id="course">
+      <h1>🎓 De zéro à autonome : les fondamentaux du trading</h1>
+      <p class="lead">Une formation complète pour comprendre les marchés, gérer son risque, et utiliser les outils XAU Guardian avec méthode.</p>
+
+      <div class="callout"><strong>Avant de commencer :</strong> cette formation explique des concepts et des méthodes. Elle ne garantit aucun résultat et ne remplace pas votre propre jugement. Le trading comporte un risque réel de perte en capital.</div>
+
+      <div class="module">
+        <div class="module-tag">Module 1</div>
+        <h2>Comprendre ce qu'est le trading</h2>
+        <p>Trader, c'est acheter ou vendre un actif (ici, l'or contre le dollar, XAUUSD) en espérant que son prix évolue dans le sens que vous avez anticipé. La différence entre le prix d'achat et le prix de vente détermine votre gain ou votre perte.</p>
+        <h3>Pourquoi l'or (XAUUSD) ?</h3>
+        <p>L'or est un actif suivi dans le monde entier, réputé pour réagir à l'inflation, aux taux d'intérêt, et à l'incertitude économique. Il bouge souvent de façon plus lisible que certaines paires de devises, ce qui en fait un marché populaire pour apprendre à lire des graphiques.</p>
+        <h3>Vocabulaire de base</h3>
+        <ul>
+          <li><strong>Pip</strong> : la plus petite unité de variation de prix suivie sur un instrument.</li>
+          <li><strong>Spread</strong> : l'écart entre le prix d'achat et le prix de vente, c'est le coût implicite payé à chaque trade.</li>
+          <li><strong>Effet de levier</strong> : la possibilité de contrôler une position plus grande que votre capital réel — cela amplifie les gains, mais tout autant les pertes.</li>
+          <li><strong>Marge</strong> : le montant bloqué sur votre compte pour maintenir une position ouverte.</li>
+        </ul>
+      </div>
+
+      <div class="module">
+        <div class="module-tag">Module 2</div>
+        <h2>La gestion du risque, avant tout</h2>
+        <p>Le point commun entre les traders qui durent dans le temps n'est pas une stratégie miracle, c'est la discipline sur le risque. Une bonne stratégie avec une mauvaise gestion du risque finit par ruiner un compte ; une gestion du risque solide protège même une stratégie imparfaite.</p>
+        <h3>La règle du pourcentage fixe</h3>
+        <p>Beaucoup de traders limitent leur risque à 1% ou 2% de leur capital par trade. Si votre stop loss est touché, vous perdez ce pourcentage, pas plus. C'est exactement ce que calcule le <a href="calculateur.html">calculateur de taille de position</a> de XAU Guardian.</p>
+        <h3>Le ratio risque/récompense</h3>
+        <p>Avant d'entrer sur un trade, comparez ce que vous risquez à ce que vous visez. Un ratio de 1:2 veut dire que vous risquez 1 pour viser 2 : même si vous ne gagnez qu'un trade sur trois, vous pouvez rester rentable sur la durée. C'est ce ratio qu'affiche le <a href="outil-signal.html">générateur de niveaux</a>.</p>
+        <div class="callout">Aucun ratio risque/récompense ne garantit un résultat positif : il décrit la structure du trade, pas son issue.</div>
+      </div>
+
+      <div class="module">
+        <div class="module-tag">Module 3</div>
+        <h2>Lire un graphique : les bases de l'analyse technique</h2>
+        <h3>Tendance et structure</h3>
+        <p>Un marché en tendance haussière enchaîne des sommets et des creux de plus en plus hauts. Un marché en tendance baissière fait l'inverse. Entre les deux, un marché latéral oscille sans direction claire. L'<a href="analyse-marche.html">aperçu du marché</a> de XAU Guardian identifie automatiquement laquelle de ces trois situations est en cours.</p>
+        <h3>Support et résistance</h3>
+        <p>Un support est un niveau de prix où la baisse a tendance à ralentir ou à s'inverser ; une résistance fait l'inverse à la hausse. Ce sont souvent d'anciens plus hauts ou plus bas récents.</p>
+        <h3>La volatilité (ATR)</h3>
+        <p>L'ATR mesure l'amplitude moyenne des mouvements récents. Une volatilité élevée signifie des mouvements plus larges (et des stops plus éloignés nécessaires) ; une volatilité faible signifie un marché plus calme.</p>
+        <h3>Rupture de canal (la stratégie du générateur de niveaux)</h3>
+        <p>Le générateur de niveaux de XAU Guardian repère quand le prix dépasse son plus haut ou son plus bas des 20 dernières bougies, et calibre l'entrée, le stop et les objectifs sur la volatilité réelle (ATR) plutôt que sur un chiffre fixe. C'est une approche connue, utilisée historiquement par des traders professionnels — sans garantie de résultat, comme toute stratégie.</p>
+      </div>
+
+      <div class="module">
+        <div class="module-tag">Module 4</div>
+        <h2>La psychologie : le facteur le plus sous-estimé</h2>
+        <ul>
+          <li><strong>Tenez un journal de trading.</strong> Notez chaque trade, pourquoi vous l'avez pris, et ce qui s'est passé. C'est la meilleure façon de progresser.</li>
+          <li><strong>Évitez le revenge trading.</strong> Après une perte, l'envie de "se refaire" immédiatement pousse à prendre des trades non préparés. Une pause vaut mieux qu'un trade de vengeance.</li>
+          <li><strong>Respectez votre plan.</strong> Un stop loss déplacé "pour laisser une chance" au trade transforme une petite perte prévue en grosse perte imprévue.</li>
+          <li><strong>Acceptez l'incertitude.</strong> Même la meilleure analyse peut ne pas fonctionner. Le trading se pense en série de trades, pas en un seul coup.</li>
+        </ul>
+      </div>
+
+      <div class="module">
+        <div class="module-tag">Module 5</div>
+        <h2>Mettre en pratique avec XAU Guardian</h2>
+        <ul>
+          <li><strong>🕐 Horloge des sessions</strong> — vérifiez si une session active (Londres/New York) est ouverte avant de chercher un signal, la volatilité y est généralement plus nette.</li>
+          <li><strong>📊 Aperçu du marché</strong> — prenez la température de la tendance et de la volatilité avant d'aller plus loin.</li>
+          <li><strong>📐 Générateur de niveaux</strong> — si une rupture est confirmée, obtenez une entrée, un stop et deux objectifs indicatifs.</li>
+          <li><strong>🧮 Calculateur de position</strong> — avant d'exécuter quoi que ce soit, calculez combien risquer réellement selon votre capital.</li>
+          <li><strong>🤖 Assistant IA</strong> — en cas de doute sur un terme ou un concept, posez la question directement.</li>
+        </ul>
+        <div class="callout"><strong>Pour résumer :</strong> aucun outil ne remplace votre jugement. Utilisez-les pour structurer votre réflexion, pas pour l'éviter.</div>
+      </div>
+
+    </article>
+  </div>
+</main>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+  import { firebaseConfig } from "./firebase-config.js";
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  const loadingEl = document.getElementById('loading');
+  const lockedEl = document.getElementById('locked');
+  const courseEl = document.getElementById('course');
+
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      window.location.href = "auth.html";
+      return;
+    }
+    try {
+      const memberDoc = await getDoc(doc(db, 'members', user.email));
+      loadingEl.style.display = 'none';
+      if (memberDoc.exists()) {
+        courseEl.classList.add('show');
+      } else {
+        lockedEl.style.display = 'block';
+      }
+    } catch (err) {
+      loadingEl.textContent = "Impossible de vérifier votre accès pour le moment.";
+    }
+  });
+</script>
+
+</body>
+</html>
