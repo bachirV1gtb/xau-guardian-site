@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tarifs — XAU Guardian</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0B0F1F; --panel:#131A2E; --panel-2:#1A2340; --line:#262F4D;
+    --blue:#4C7EFF; --violet:#8B7CF6; --violet-bright:#A99BFF;
+    --text:#E7E9F5; --muted:#8890AA; --green:#34D399; --red:#F87171;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;}
+  h1,h2{font-weight:600;margin:0;}
+  a{color:inherit;}
+  .wrap{max-width:1000px;margin:0 auto;padding:0 28px;}
+  nav{border-bottom:1px solid var(--line);}
+  nav .wrap{height:68px;display:flex;align-items:center;justify-content:space-between;}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:1.1rem;}
+  a.back{color:var(--muted);text-decoration:none;font-size:0.9rem;}
+  a.back:hover{color:var(--violet-bright);}
+
+  main{padding:70px 0;}
+  h1{font-size:2rem;text-align:center;}
+  .sub{color:var(--muted);text-align:center;margin-top:14px;max-width:52ch;margin-left:auto;margin-right:auto;}
+
+  .plans{margin-top:52px;display:grid;grid-template-columns:repeat(2,1fr);gap:24px;}
+  @media (max-width:760px){ .plans{grid-template-columns:1fr;} }
+  .plan{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:32px;}
+  .plan.highlight{border-color:var(--violet);}
+  .plan .name{font-size:1.2rem;font-weight:600;}
+  .plan .desc{color:var(--muted);margin-top:6px;font-size:0.9rem;}
+  .plan .price{margin-top:18px;font-size:2rem;font-weight:600;}
+  .plan .price span{font-size:0.9rem;color:var(--muted);font-weight:400;}
+  .plan ul{margin:24px 0 0;padding:0;list-style:none;font-size:0.92rem;}
+  .plan li{padding:10px 0;border-top:1px solid var(--line);display:flex;gap:10px;}
+  .plan li:first-child{border-top:none;}
+  .plan .btn{display:block;text-align:center;margin-top:26px;padding:12px;border-radius:6px;text-decoration:none;font-weight:600;font-size:0.95rem;}
+  .plan .btn.primary{background:var(--violet);color:#0E1120;}
+  .plan .btn.primary:hover{background:var(--violet-bright);}
+  .plan .btn.ghost{border:1px solid var(--line);color:var(--text);}
+
+  .note{margin-top:44px;text-align:center;color:var(--muted);font-size:0.88rem;}
+
+  footer{border-top:1px solid var(--line);padding:36px 0;color:var(--muted);font-size:0.85rem;}
+  footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="brand">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2 20 6v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-4Z" stroke="#8B7CF6" stroke-width="1.4"/></svg>
+      XAU Guardian
+    </div>
+    <a class="back" href="index.html">← Accueil</a>
+  </div>
+</nav>
+
+<main>
+  <div class="wrap">
+    <h1>Des tarifs simples</h1>
+    <p class="sub">Commencez gratuitement. L'offre Membre, avec accès illimité, arrive bientôt.</p>
+
+    <div class="plans">
+      <div class="plan">
+        <div class="name">Découverte</div>
+        <div class="desc">Pour commencer et tester le canal.</div>
+        <div class="price">Gratuit</div>
+        <ul>
+          <li>Accès au canal Telegram XAU Guardian</li>
+          <li>Générateur de niveaux (usage limité)</li>
+          <li>Assistant IA (usage limité)</li>
+          <li>Historique de vos analyses</li>
+        </ul>
+        <a class="btn ghost" href="auth.html">Créer un compte gratuit</a>
+      </div>
+      <div class="plan highlight">
+        <div class="name">Membre</div>
+        <div class="desc">Pour un usage régulier, sans limite.</div>
+        <div class="price">Bientôt <span>disponible</span></div>
+        <ul>
+          <li>Tout le plan Découverte</li>
+          <li>Générateur de niveaux sans limite</li>
+          <li>Assistant IA sans limite</li>
+          <li>Alertes prioritaires sur le canal</li>
+        </ul>
+        <a class="btn primary" href="index.html#comment-ca-marche">Être prévenu au lancement</a>
+      </div>
+    </div>
+
+    <p class="note">Aucun paiement n'est collecté sur ce site pour le moment. Le plan Membre sera annoncé sur le canal Telegram dès son ouverture.</p>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>XAU Guardian</span>
+    <span>Signaux XAUUSD · Générateur de niveaux · Assistant IA</span>
+  </div>
+</footer>
+
+</body>
+</html>
