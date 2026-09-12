@@ -6,20 +6,20 @@
 <title>Tableau de bord — XAU Guardian</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#0E1512; --panel:#16211C; --line:#2A3931;
-    --gold:#C9A659; --gold-bright:#E8C878;
-    --text:#EDEAE2; --muted:#8B9691; --green:#6E9A7C;
+    --bg:#0B0F1F; --panel:#131A2E; --line:#262F4D;
+    --gold:#8B7CF6; --gold-bright:#A99BFF;
+    --text:#E7E9F5; --muted:#8890AA; --green:#6E9A7C;
   }
   *{box-sizing:border-box;}
-  body{margin:0;background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;}
-  h1,h2{font-family:'Newsreader',serif;font-weight:500;margin:0;}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;}
+  h1,h2{font-weight:600;margin:0;}
   .wrap{max-width:920px;margin:0 auto;padding:0 28px;}
   nav{border-bottom:1px solid var(--line);}
   nav .wrap{height:68px;display:flex;align-items:center;justify-content:space-between;}
-  .brand{display:flex;align-items:center;gap:10px;font-family:'Newsreader',serif;font-size:1.1rem;}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:1.1rem;}
   button.logout{
     background:transparent;border:1px solid var(--line);color:var(--text);
     padding:9px 16px;border-radius:3px;font-family:inherit;cursor:pointer;font-size:0.9rem;
@@ -41,11 +41,16 @@
   <div class="wrap">
     <div class="brand">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-        <path d="M12 2 20 6v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-4Z" stroke="#C9A659" stroke-width="1.4"/>
+        <path d="M12 2 20 6v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-4Z" stroke="#8B7CF6" stroke-width="1.4"/>
       </svg>
       XAU Guardian
     </div>
-    <button class="logout" id="logout-btn">Se déconnecter</button>
+    <div style="display:flex;align-items:center;gap:20px;">
+      <a href="outil-signal.html" style="color:var(--muted);text-decoration:none;font-size:0.9rem;">Générateur de niveaux</a>
+      <a href="assistant.html" style="color:var(--muted);text-decoration:none;font-size:0.9rem;">Assistant IA</a>
+      <a href="tarifs.html" style="color:var(--muted);text-decoration:none;font-size:0.9rem;">Tarifs</a>
+      <button class="logout" id="logout-btn">Se déconnecter</button>
+    </div>
   </div>
 </nav>
 
@@ -58,7 +63,7 @@
     </div>
 
     <div style="margin-top:24px;text-align:center;">
-      <a href="outil-signal.html" style="display:inline-flex;align-items:center;gap:8px;background:var(--gold);color:#161E19;padding:12px 22px;border-radius:4px;text-decoration:none;font-weight:600;font-size:0.95rem;">
+      <a href="outil-signal.html" style="display:inline-flex;align-items:center;gap:8px;background:var(--gold);color:#0E1120;padding:12px 22px;border-radius:4px;text-decoration:none;font-weight:600;font-size:0.95rem;">
         Ouvrir le générateur de niveaux
       </a>
     </div>
