@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XAU Guardian — Alertes et automatisation sur l'or</title>
+<meta name="description" content="Alertes de trading sur XAUUSD, exécution automatique via votre broker, sans surveiller les écrans toute la journée.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0E1512;
+    --panel: #16211C;
+    --panel-2: #1C2A23;
+    --line: #2A3931;
+    --gold: #C9A659;
+    --gold-bright: #E8C878;
+    --text: #EDEAE2;
+    --muted: #8B9691;
+    --rust: #C1543F;
+    --green: #6E9A7C;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:'IBM Plex Sans', sans-serif;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{
+    font-family:'Newsreader', serif;
+    font-weight:500;
+    margin:0;
+    letter-spacing:-0.01em;
+  }
+  a{color:inherit;}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 28px;}
+  img,svg{display:block;}
+
+  /* Nav */
+  nav{
+    position:sticky;top:0;z-index:20;
+    background:rgba(14,21,18,0.86);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  nav .wrap{
+    display:flex;align-items:center;justify-content:space-between;
+    height:68px;
+  }
+  .brand{display:flex;align-items:center;gap:10px;font-family:'Newsreader',serif;font-size:1.15rem;}
+  .brand-mark{width:26px;height:26px;flex:none;}
+  .navlinks{display:flex;gap:30px;font-size:0.94rem;color:var(--muted);}
+  .navlinks a:hover{color:var(--gold-bright);}
+  .nav-cta{
+    display:inline-flex;align-items:center;gap:8px;
+    background:var(--gold);color:#161E19;
+    padding:9px 18px;border-radius:3px;
+    font-size:0.9rem;font-weight:600;text-decoration:none;
+  }
+  .nav-cta:hover{background:var(--gold-bright);}
+  @media (max-width:760px){ .navlinks{display:none;} }
+
+  /* Hero */
+  .hero{padding:88px 0 76px;border-bottom:1px solid var(--line);}
+  .hero .wrap{display:grid;grid-template-columns:1.15fr 0.85fr;gap:56px;align-items:center;}
+  @media (max-width:900px){ .hero .wrap{grid-template-columns:1fr;} }
+  .eyebrow{color:var(--gold);font-size:0.9rem;margin-bottom:18px;}
+  .hero h1{font-size:clamp(2.2rem,4.4vw,3.4rem);line-height:1.1;color:var(--text);}
+  .hero p.lead{margin-top:22px;font-size:1.08rem;color:var(--muted);max-width:46ch;}
+  .hero-ctas{display:flex;gap:14px;margin-top:34px;flex-wrap:wrap;}
+  .btn-primary{
+    background:var(--gold);color:#161E19;padding:13px 24px;border-radius:3px;
+    font-weight:600;text-decoration:none;font-size:0.98rem;
+  }
+  .btn-primary:hover{background:var(--gold-bright);}
+  .btn-ghost{
+    border:1px solid var(--line);color:var(--text);padding:13px 24px;border-radius:3px;
+    text-decoration:none;font-size:0.98rem;
+  }
+  .btn-ghost:hover{border-color:var(--gold);}
+
+  /* alert card mock */
+  .alert-card{
+    background:var(--panel);border:1px solid var(--line);border-radius:6px;
+    padding:22px 22px 18px;box-shadow:0 24px 60px -30px rgba(0,0,0,0.6);
+  }
+  .alert-card .top{display:flex;justify-content:space-between;align-items:baseline;}
+  .alert-card .pair{font-family:'Newsreader',serif;font-size:1.3rem;}
+  .alert-card .dir{
+    background:rgba(110,154,124,0.16);color:var(--green);
+    padding:3px 10px;border-radius:3px;font-size:0.8rem;font-weight:600;
+  }
+  .alert-card .ts{color:var(--muted);font-size:0.78rem;margin-top:4px;}
+  .alert-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:18px;border-top:1px solid var(--line);}
+  .alert-grid div{padding:14px 0;}
+  .alert-grid div + div{border-left:1px solid var(--line);padding-left:14px;}
+  .alert-grid .k{color:var(--muted);font-size:0.74rem;text-transform:uppercase;}
+  .alert-grid .v{margin-top:4px;font-size:1.02rem;font-family:'Newsreader',serif;}
+  .alert-card .foot{margin-top:16px;color:var(--muted);font-size:0.82rem;}
+
+  /* How it works */
+  .steps{padding:80px 0;border-bottom:1px solid var(--line);}
+  .steps h2{font-size:2rem;max-width:20ch;}
+  .steps .sub{color:var(--muted);margin-top:14px;max-width:56ch;}
+  .step-list{margin-top:48px;display:grid;grid-template-columns:repeat(3,1fr);gap:0;}
+  @media (max-width:800px){ .step-list{grid-template-columns:1fr;} }
+  .step{padding:0 28px 0 0;border-right:1px solid var(--line);}
+  .step:last-child{border-right:none;padding-right:0;}
+  .step:not(:first-child){padding-left:28px;}
+  .step .num{color:var(--gold);font-family:'Newsreader',serif;font-size:1.5rem;}
+  .step h3{margin-top:14px;font-size:1.2rem;}
+  .step p{color:var(--muted);margin-top:10px;font-size:0.95rem;}
+
+  /* Features */
+  .features{padding:80px 0;border-bottom:1px solid var(--line);}
+  .features .head{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;}
+  .features h2{font-size:2rem;max-width:16ch;}
+  .feat-row{margin-top:50px;display:flex;flex-direction:column;}
+  .feat{
+    display:grid;grid-template-columns:280px 1fr;gap:40px;
+    padding:30px 0;border-top:1px solid var(--line);
+  }
+  @media (max-width:760px){ .feat{grid-template-columns:1fr;gap:10px;} }
+  .feat h3{font-size:1.15rem;color:var(--gold-bright);}
+  .feat p{color:var(--muted);margin-top:8px;max-width:60ch;}
+
+  /* Risk band */
+  .risk{padding:46px 0;background:var(--panel);border-bottom:1px solid var(--line);}
+  .risk .wrap{display:flex;gap:18px;align-items:flex-start;}
+  .risk .mark{color:var(--rust);font-family:'Newsreader',serif;font-size:1.3rem;flex:none;}
+  .risk p{color:var(--muted);font-size:0.92rem;max-width:76ch;}
+
+  /* CTA */
+  .cta-band{padding:90px 0;text-align:center;}
+  .cta-band h2{font-size:clamp(1.8rem,3.6vw,2.6rem);max-width:24ch;margin:0 auto;}
+  .cta-band p{color:var(--muted);margin-top:16px;}
+  .cta-band .hero-ctas{justify-content:center;margin-top:32px;}
+
+  footer{border-top:1px solid var(--line);padding:36px 0;color:var(--muted);font-size:0.85rem;}
+  footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="brand">
+      <svg class="brand-mark" viewBox="0 0 24 24" fill="none">
+        <path d="M12 2 20 6v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-4Z" stroke="#C9A659" stroke-width="1.4"/>
+        <circle cx="12" cy="11" r="3" stroke="#E8C878" stroke-width="1.2"/>
+      </svg>
+      XAU Guardian
+    </div>
+    <div class="navlinks">
+      <a href="#comment-ca-marche">Comment ça marche</a>
+      <a href="#fonctionnalites">Fonctionnalités</a>
+      <a href="#risque">Risques</a>
+    </div>
+    <a class="nav-cta" href="auth.html">Créer un compte</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <div class="eyebrow">XAUUSD · alertes en direct</div>
+      <h1>L'or ne dort jamais.<br>Votre veille non plus.</h1>
+      <p class="lead">XAU Guardian surveille le marché de l'or 24h/24 et vous envoie chaque signal directement sur Telegram — avec la possibilité de le laisser s'exécuter automatiquement sur votre compte broker.</p>
+      <div class="hero-ctas">
+        <a class="btn-primary" href="auth.html">Créer un compte gratuit</a>
+        <a class="btn-ghost" href="#comment-ca-marche">Voir comment ça marche</a>
+      </div>
+    </div>
+    <div class="alert-card">
+      <div class="top">
+        <div class="pair">XAU/USD</div>
+        <div class="dir">ACHAT</div>
+      </div>
+      <div class="ts">Signal envoyé à 15:32 · session New York</div>
+      <div class="alert-grid">
+        <div><div class="k">Entrée</div><div class="v">2 641.80</div></div>
+        <div><div class="k">Stop</div><div class="v">2 636.20</div></div>
+        <div><div class="k">Objectif</div><div class="v">2 652.90</div></div>
+      </div>
+      <div class="foot">Ratio risque/récompense 1:2 · exécution automatique disponible</div>
+    </div>
+  </div>
+</section>
+
+<section class="steps" id="comment-ca-marche">
+  <div class="wrap">
+    <h2>De l'alerte au trade, en trois étapes</h2>
+    <p class="sub">Vous gardez le contrôle à chaque étape : rester en lecture seule sur Telegram, ou brancher votre broker pour une exécution automatique.</p>
+    <div class="step-list">
+      <div class="step">
+        <div class="num">01</div>
+        <h3>Créez votre compte</h3>
+        <p>Inscription en quelques secondes. Vous rejoignez le canal Telegram XAU Guardian et recevez les premières alertes immédiatement.</p>
+      </div>
+      <div class="step">
+        <div class="num">02</div>
+        <h3>Connectez un broker</h3>
+        <p>Optionnel. Reliez un compte broker compatible pour laisser les signaux s'exécuter automatiquement, sans ouvrir votre plateforme.</p>
+      </div>
+      <div class="step">
+        <div class="num">03</div>
+        <h3>Suivez vos résultats</h3>
+        <p>Chaque signal est horodaté et archivé dans votre tableau de bord : entrée, stop, objectif, et résultat une fois clôturé.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="features" id="fonctionnalites">
+  <div class="wrap">
+    <div class="head">
+      <h2>Ce que surveille le Guardian</h2>
+    </div>
+    <div class="feat-row">
+      <div class="feat">
+        <h3>Alertes XAUUSD en continu</h3>
+        <p>Le marché de l'or est analysé en permanence ; chaque signal est publié avec son niveau d'entrée, son stop et son objectif, sans jargon inutile.</p>
+      </div>
+      <div class="feat">
+        <h3>Exécution automatique optionnelle</h3>
+        <p>Pour ceux qui préfèrent ne pas passer d'ordres eux-mêmes, un compte broker peut être relié pour que les signaux valides s'exécutent seuls.</p>
+      </div>
+      <div class="feat">
+        <h3>Historique transparent</h3>
+        <p>Chaque alerte reste visible dans votre espace, qu'elle ait atteint son objectif, touché son stop, ou soit encore en cours.</p>
+      </div>
+      <div class="feat">
+        <h3>Un canal, pas une boîte noire</h3>
+        <p>Les décisions restent lisibles : vous savez toujours pourquoi un signal a été envoyé et à quel moment il a été clôturé.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="risk" id="risque">
+  <div class="wrap">
+    <span class="mark">!</span>
+    <p>Le trading sur le marché des changes et des métaux comporte un risque de perte en capital. Les performances passées ne préjugent pas des performances futures. XAU Guardian fournit des signaux à titre informatif ; l'exécution automatique reste sous votre responsabilité et celle de votre broker.</p>
+  </div>
+</section>
+
+<section class="cta-band">
+  <div class="wrap">
+    <h2>Rejoignez le canal avant le prochain signal</h2>
+    <p>Gratuit à la création du compte.</p>
+    <div class="hero-ctas">
+      <a class="btn-primary" href="auth.html">Créer un compte</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>XAU Guardian</span>
+    <span>Signaux XAUUSD · Telegram · exécution automatique</span>
+  </div>
+</footer>
+
+</body>
+</html>
