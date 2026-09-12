@@ -6,30 +6,30 @@
 <title>Connexion — XAU Guardian</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#0E1512; --panel:#16211C; --line:#2A3931;
-    --gold:#C9A659; --gold-bright:#E8C878;
-    --text:#EDEAE2; --muted:#8B9691; --rust:#C1543F;
+    --bg:#0B0F1F; --panel:#131A2E; --line:#262F4D;
+    --gold:#8B7CF6; --gold-bright:#A99BFF;
+    --text:#E7E9F5; --muted:#8890AA; --rust:#C1543F;
   }
   *{box-sizing:border-box;}
   body{
     margin:0;min-height:100vh;background:var(--bg);color:var(--text);
-    font-family:'IBM Plex Sans',sans-serif;display:grid;grid-template-columns:1fr 1fr;
+    font-family:'Inter',sans-serif;display:grid;grid-template-columns:1fr 1fr;
   }
   @media (max-width:860px){ body{grid-template-columns:1fr;} .side{display:none;} }
-  h1,h2{font-family:'Newsreader',serif;font-weight:500;margin:0;}
+  h1,h2{font-weight:600;margin:0;}
 
   .side{
     background:var(--panel);border-right:1px solid var(--line);
     display:flex;flex-direction:column;justify-content:space-between;
     padding:48px;
   }
-  .brand{display:flex;align-items:center;gap:10px;font-family:'Newsreader',serif;font-size:1.1rem;}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:1.1rem;}
   .brand-mark{width:24px;height:24px;flex:none;}
   .side blockquote{
-    font-family:'Newsreader',serif;font-style:italic;font-size:1.5rem;line-height:1.4;
+    font-style:italic;font-size:1.5rem;line-height:1.4;
     color:var(--text);max-width:32ch;margin:0;
   }
   .side .cite{margin-top:16px;color:var(--muted);font-size:0.88rem;font-style:normal;}
@@ -39,11 +39,11 @@
   .form-box{width:100%;max-width:380px;}
   .form-box a.brand-mobile{display:none;}
   @media (max-width:860px){
-    .form-box a.brand-mobile{display:flex;align-items:center;gap:10px;font-family:'Newsreader',serif;font-size:1.1rem;margin-bottom:36px;text-decoration:none;color:var(--text);}
+    .form-box a.brand-mobile{display:flex;align-items:center;gap:10px;font-weight:600;font-size:1.1rem;margin-bottom:36px;text-decoration:none;color:var(--text);}
   }
   .tabs{display:flex;border:1px solid var(--line);border-radius:4px;overflow:hidden;margin-bottom:28px;}
   .tab{flex:1;text-align:center;padding:11px 0;font-size:0.92rem;color:var(--muted);cursor:pointer;background:transparent;border:none;font-family:inherit;}
-  .tab.active{background:var(--gold);color:#161E19;font-weight:600;}
+  .tab.active{background:var(--gold);color:#0E1120;font-weight:600;}
   h2{font-size:1.5rem;}
   .form-box p.sub{color:var(--muted);margin-top:8px;font-size:0.92rem;}
 
@@ -55,7 +55,7 @@
   }
   input:focus{outline:2px solid var(--gold);outline-offset:1px;border-color:var(--gold);}
   button.submit{
-    margin-top:6px;background:var(--gold);color:#161E19;border:none;
+    margin-top:6px;background:var(--gold);color:#0E1120;border:none;
     padding:13px;border-radius:4px;font-weight:600;font-size:0.98rem;cursor:pointer;font-family:inherit;
   }
   button.submit:hover{background:var(--gold-bright);}
@@ -77,8 +77,8 @@
 <div class="side">
   <div class="brand">
     <svg class="brand-mark" viewBox="0 0 24 24" fill="none">
-      <path d="M12 2 20 6v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-4Z" stroke="#C9A659" stroke-width="1.4"/>
-      <circle cx="12" cy="11" r="3" stroke="#E8C878" stroke-width="1.2"/>
+      <path d="M12 2 20 6v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-4Z" stroke="#8B7CF6" stroke-width="1.4"/>
+      <circle cx="12" cy="11" r="3" stroke="#A99BFF" stroke-width="1.2"/>
     </svg>
     XAU Guardian
   </div>
@@ -93,7 +93,7 @@
   <div class="form-box">
     <a class="brand-mobile" href="index.html">
       <svg class="brand-mark" width="22" height="22" viewBox="0 0 24 24" fill="none">
-        <path d="M12 2 20 6v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-4Z" stroke="#C9A659" stroke-width="1.4"/>
+        <path d="M12 2 20 6v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-4Z" stroke="#8B7CF6" stroke-width="1.4"/>
       </svg>
       XAU Guardian
     </a>
