@@ -58,6 +58,171 @@
     </div>
     <div style="display:flex;align-items:center;gap:16px;">
       <a href="https://t.me/+-aD8_q-5Qf9lNTU0" target="_blank" rel="noopener" style="color:var(--muted);text-decoration:none;font-size:0.9rem;">📢 Telegram</a>
+      <a href="analyse-marche.html" style="color:var(--muted);text-decoration:none;font-size:0.9rem;">📊 Aperçu du marché</a>
+      <a href="calculateur.html" style="color:var(--muted);text-decoration:none;font-size:0.9rem;">🧮 Calculateur</a>
+      <a class="back" href="dashboard.html">← Tableau de bord</a>
+    </div>
+  </div>
+</nav>
+
+<main>
+  <div class="wrap">
+    <h1>🤖 Assistant XAU Guardian</h1>
+    <p class="sub">Posez une question sur un terme de trading ou le fonctionnement du site.</p>
+
+    <div class="chat">
+      <div class="messages" id="messages">
+        <div class="msg ai">Bonjour. Je peux expliquer des termes de trading (stop loss, take profit, ATR, rupture de canal...) ou vous aider à utiliser le site. Que voulez-vous savoir ?</div>
+      </div>
+      <div class="suggestions">
+        <button class="sugg" data-q="C'est quoi un stop loss ?">Stop loss ?</button>
+        <button class="sugg" data-q="C'est quoi le ratio risque/récompense ?">Ratio risque/récompense ?</button>
+        <button class="sugg" data-q="Comment fonctionne le générateur de niveaux ?">Générateur de niveaux ?</button>
+        <button class="sugg" data-q="Comment rejoindre le canal Telegram ?">Rejoindre Telegram ?</button>
+      </div>
+      <div class="input-row">
+        <input type="text" id="input" placeholder="Écrivez votre question…">
+        <button class="send" id="send-btn">Envoyer</button>
+      </div>
+    </div>
+
+    <p class="note">Cet assistant explique des concepts et le fonctionnement du site à partir d'une base de connaissances intégrée. Il ne donne pas de conseil en investissement personnalisé et ne remplace pas votre propre jugement.</p>
+  </div>
+</main>
+
+<script>
+  const knowledge = [
+    { keys: ['stop loss', 'stoploss', 'stop-loss', 'sl'],
+      a: "Le stop loss est le niveau de prix auquel votre position se ferme automatiquement pour limiter une perte si le marché va contre vous." },
+    { keys: ['take profit', 'objectif', 'tp'],
+      a: "Le take profit (ou objectif) est le niveau de prix auquel votre position se ferme automatiquement pour sécuriser un gain." },
+    { keys: ['ratio risque', 'risque/récompense', 'risque récompense', 'rr'],
+      a: "Le ratio risque/récompense compare ce que vous risquez de perdre à ce que vous visez de gagner. Un ratio de 1:2 veut dire que vous risquez 1 pour viser un gain deux fois plus grand." },
+    { keys: ['atr', 'volatilité'],
+      a: "L'ATR (Average True Range) mesure l'amplitude moyenne des mouvements récents d'un marché. Plus l'ATR est élevé, plus le marché bouge fort — c'est ce qui sert à calibrer le stop et les objectifs dans le générateur de niveaux." },
+    { keys: ['rupture', 'canal', 'donchian', 'breakout'],
+      a: "Une rupture de canal, c'est quand le prix dépasse son plus haut ou son plus bas récent. Le générateur de niveaux utilise cette idée : une rupture confirmée déclenche un niveau d'entrée, calibré sur la volatilité du marché." },
+    { keys: ['générateur de niveaux', 'generateur de niveaux', 'outil'],
+      a: "Le générateur de niveaux est accessible depuis votre tableau de bord. Choisissez un instrument (ex. XAU/USD) et un horizon, puis cliquez sur Analyser : il calcule une entrée, un stop, et deux objectifs à partir de données de prix réelles." },
+    { keys: ['telegram', 'canal'],
+      a: "Le lien vers le canal Telegram XAU Guardian vous est communiqué après la création de votre compte. Vérifiez votre tableau de bord." },
+    { keys: ['compte', 'inscription', 'inscrire', 'créer un compte'],
+      a: "Vous pouvez créer un compte gratuitement depuis la page de connexion, avec un simple e-mail et un mot de passe." },
+    { keys: ['tarif', 'prix', 'combien', 'payant', 'abonnement'],
+      a: "L'accès de base est gratuit. Un plan Membre avec accès illimité aux outils est en préparation — voir la page Tarifs pour le détail." },
+    { keys: ['conseil', 'dois-je', 'acheter', 'vendre', 'investir', 'recommandes'],
+      a: "Je ne peux pas vous dire quoi acheter ou vendre : ce serait un conseil en investissement personnalisé, ce que je ne fournis pas. Le générateur de niveaux donne une lecture technique indicative, à vous d'en faire votre propre analyse." },
+    { keys: ['risque', 'perdre', 'perte', 'danger'],
+      a: "Le trading comporte un risque réel de perte en capital. Ni les alertes, ni le générateur de niveaux ne garantissent un résultat — utilisez toujours une gestion du risque adaptée à votre situation." }
+  ];
+
+  const fallback = "Je ne suis pas certain de pouvoir répondre précisément à ça. Essayez de reformuler, ou posez une question sur un terme de trading (stop loss, ATR, ratio risque/récompense...) ou sur le fonctionnement du site.";
+
+  function findAnswer(question){
+    const q = question.toLowerCase();
+    let best = null;
+    let bestScore = 0;
+    for (const entry of knowledge){
+      for (const key of entry.keys){
+        if (q.includes(key)){
+          if (key.length > bestScore){
+            bestScore = key.length;
+            best = entry.a;
+          }
+        }
+      }
+    }
+    return best || fallback;
+  }
+
+  const messagesEl = document.getElementById('messages');
+  const inputEl = document.getElementById('input');
+
+  function addMessage(text, role){
+    const div = document.createElement('div');
+    div.className = 'msg ' + role;
+    div.textContent = text;
+    messagesEl.appendChild(div);
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+  }
+
+  function ask(question){
+    if (!question.trim()) return;
+    addMessage(question, 'user');
+    inputEl.value = '';
+    setTimeout(() => {
+      addMessage(findAnswer(question), 'ai');
+    }, 300);
+  }
+
+  document.getElementById('send-btn').addEventListener('click', () => ask(inputEl.value));
+  inputEl.addEventListener('keydown', (e) => { if (e.key === 'Enter') ask(inputEl.value); });
+  document.querySelectorAll('.sugg').forEach(btn => {
+    btn.addEventListener('click', () => ask(btn.dataset.q));
+  });
+</script>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Assistant IA — XAU Guardian</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0B0F1F; --panel:#131A2E; --panel-2:#1A2340; --line:#262F4D;
+    --violet:#8B7CF6; --violet-bright:#A99BFF;
+    --text:#E7E9F5; --muted:#8890AA;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;}
+  h1{font-weight:600;margin:0;}
+  a{color:inherit;}
+  .wrap{max-width:720px;margin:0 auto;padding:0 24px;}
+  nav{border-bottom:1px solid var(--line);}
+  nav .wrap{height:66px;display:flex;align-items:center;justify-content:space-between;}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:1.02rem;}
+  .brand span{color:var(--muted);font-weight:400;font-size:0.85rem;}
+  a.back{color:var(--muted);text-decoration:none;font-size:0.9rem;}
+  a.back:hover{color:var(--violet-bright);}
+
+  main{padding:40px 0 60px;}
+  h1{font-size:1.4rem;margin-bottom:6px;}
+  .sub{color:var(--muted);font-size:0.9rem;margin-bottom:26px;}
+
+  .chat{background:var(--panel);border:1px solid var(--line);border-radius:12px;display:flex;flex-direction:column;height:520px;}
+  .messages{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:12px;}
+  .msg{max-width:78%;padding:11px 14px;border-radius:10px;font-size:0.92rem;line-height:1.5;}
+  .msg.ai{background:var(--panel-2);align-self:flex-start;}
+  .msg.user{background:rgba(139,124,246,0.16);color:var(--violet-bright);align-self:flex-end;}
+
+  .suggestions{padding:0 20px 14px;display:flex;flex-wrap:wrap;gap:8px;}
+  .sugg{background:var(--panel-2);border:1px solid var(--line);color:var(--muted);padding:7px 12px;border-radius:20px;font-size:0.8rem;cursor:pointer;font-family:inherit;}
+  .sugg:hover{border-color:var(--violet);color:var(--violet-bright);}
+
+  .input-row{display:flex;gap:10px;padding:16px 20px;border-top:1px solid var(--line);}
+  input[type=text]{flex:1;background:var(--panel-2);border:1px solid var(--line);color:var(--text);padding:11px 13px;border-radius:6px;font-size:0.94rem;font-family:inherit;}
+  input[type=text]:focus{outline:2px solid var(--violet);outline-offset:1px;}
+  button.send{background:var(--violet);color:#0E1120;border:none;padding:0 20px;border-radius:6px;font-weight:600;cursor:pointer;font-family:inherit;}
+  button.send:hover{background:var(--violet-bright);}
+
+  .note{margin-top:18px;color:var(--muted);font-size:0.82rem;line-height:1.5;}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="brand">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 2 20 6v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-4Z" stroke="#8B7CF6" stroke-width="1.4"/></svg>
+      XAU Guardian <span>· assistant</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:16px;">
+      <a href="https://t.me/+-aD8_q-5Qf9lNTU0" target="_blank" rel="noopener" style="color:var(--muted);text-decoration:none;font-size:0.9rem;">📢 Telegram</a>
       <a class="back" href="dashboard.html">← Tableau de bord</a>
     </div>
   </div>
