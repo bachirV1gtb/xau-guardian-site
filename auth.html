@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%230B0F1F'/%3E%3Cpath d='M12 3 19 6.5V12c0 4.5-3 7.8-7 9-4-1.2-7-4.5-7-9V6.5L12 3Z' fill='%238B7CF6'/%3E%3C/svg%3E">
 <title>Connexion — XAU Guardian</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -114,6 +115,7 @@
       <div>
         <label for="password">Mot de passe</label>
         <input type="password" id="password" required autocomplete="current-password" minlength="6">
+        <p id="forgot-link" style="margin-top:8px;font-size:0.85rem;"><a href="#" id="forgot-password" style="color:var(--violet-bright);text-decoration:none;">Mot de passe oublié ?</a></p>
       </div>
       <button type="submit" class="submit" id="submit-btn">Se connecter</button>
     </form>
@@ -132,6 +134,7 @@
     getAuth,
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
+    sendPasswordResetEmail,
     onAuthStateChanged
   } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
   import { firebaseConfig } from "./firebase-config.js";
@@ -168,16 +171,44 @@
       title.textContent = 'Content de vous revoir';
       sub.textContent = 'Connectez-vous pour retrouver vos alertes.';
       submitBtn.textContent = 'Se connecter';
+      document.getElementById('forgot-link').style.display = 'block';
     } else {
       title.textContent = 'Créer un compte';
       sub.textContent = 'Rejoignez XAU Guardian en quelques secondes.';
       submitBtn.textContent = 'Créer mon compte';
+      document.getElementById('forgot-link').style.display = 'none';
     }
     msgEl.className = 'msg';
     msgEl.textContent = '';
   }
 
   tabs.forEach(t => t.addEventListener('click', () => setMode(t.dataset.mode)));
+
+  document.getElementById('forgot-password').addEventListener('click', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('email').value.trim();
+    msgEl.className = 'msg';
+    msgEl.textContent = '';
+
+    if (!email) {
+      msgEl.className = 'msg error';
+      msgEl.textContent = "Renseigne d'abord ton e-mail dans le champ ci-dessus.";
+      return;
+    }
+    if (!auth) {
+      msgEl.className = 'msg error';
+      msgEl.textContent = "Configure d'abord Firebase (voir firebase-config.js).";
+      return;
+    }
+    try {
+      await sendPasswordResetEmail(auth, email);
+      msgEl.className = 'msg ok';
+      msgEl.textContent = `Un e-mail de réinitialisation a été envoyé à ${email}, si un compte existe avec cette adresse.`;
+    } catch (err) {
+      msgEl.className = 'msg error';
+      msgEl.textContent = "Impossible d'envoyer l'e-mail pour le moment. Vérifie l'adresse et réessaie.";
+    }
+  });
 
   function showError(err){
     const map = {
