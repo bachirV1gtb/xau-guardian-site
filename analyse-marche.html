@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aperçu du marché — XAU Guardian</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0B0F1F; --panel:#131A2E; --panel-2:#1A2340; --line:#262F4D;
+    --violet:#8B7CF6; --violet-bright:#A99BFF;
+    --text:#E7E9F5; --muted:#8890AA; --green:#34D399; --red:#F87171; --amber:#FBBF24;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;min-height:100vh;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+  .wrap{max-width:760px;margin:0 auto;padding:0 24px;}
+  nav{border-bottom:1px solid var(--line);}
+  nav .wrap{height:66px;display:flex;align-items:center;justify-content:space-between;}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:1.02rem;}
+  .brand span{color:var(--muted);font-weight:400;font-size:0.85rem;}
+  a.back{color:var(--muted);text-decoration:none;font-size:0.9rem;}
+  a.back:hover{color:var(--violet-bright);}
+
+  main{padding:44px 0 70px;}
+  h1{font-size:1.5rem;font-weight:600;margin:0 0 6px;}
+  .sub{color:var(--muted);font-size:0.94rem;margin:0 0 30px;max-width:56ch;}
+
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:24px;}
+  .field-row{display:flex;gap:16px;align-items:flex-end;}
+  @media (max-width:520px){ .field-row{flex-direction:column;align-items:stretch;} }
+  label{display:block;font-size:0.82rem;color:var(--muted);margin-bottom:7px;}
+  input[type=text]{width:100%;background:var(--panel-2);border:1px solid var(--line);color:var(--text);padding:11px 12px;border-radius:6px;font-size:0.95rem;font-family:inherit;}
+  input[type=text]:focus{outline:2px solid var(--violet);outline-offset:1px;}
+  button.analyze{background:var(--violet);color:#0E1120;border:none;padding:12px 24px;border-radius:6px;font-weight:600;font-size:0.95rem;cursor:pointer;font-family:inherit;white-space:nowrap;}
+  button.analyze:hover{background:var(--violet-bright);}
+  button.analyze:disabled{opacity:0.55;cursor:not-allowed;}
+
+  .msg{margin-top:16px;font-size:0.9rem;padding:12px 14px;border-radius:6px;display:none;}
+  .msg.error{display:block;background:rgba(248,113,113,0.12);color:#F5A3A3;border:1px solid rgba(248,113,113,0.3);}
+  .msg.loading{display:block;color:var(--muted);}
+  .config-warning{margin-top:18px;font-size:0.83rem;color:var(--muted);border:1px solid var(--line);border-radius:8px;padding:14px 16px;}
+  .config-warning code{color:var(--violet-bright);}
+
+  .result{margin-top:26px;display:none;}
+  .result.show{display:block;}
+  .badges{display:flex;gap:10px;flex-wrap:wrap;}
+  .badge{padding:6px 13px;border-radius:20px;font-size:0.82rem;font-weight:600;}
+  .badge.up{background:rgba(52,211,153,0.14);color:var(--green);}
+  .badge.down{background:rgba(248,113,113,0.14);color:var(--red);}
+  .badge.flat{background:rgba(136,144,170,0.14);color:var(--muted);}
+  .badge.vol-low{background:rgba(139,124,246,0.14);color:var(--violet-bright);}
+  .badge.vol-med{background:rgba(251,191,36,0.14);color:var(--amber);}
+  .badge.vol-high{background:rgba(248,113,113,0.14);color:var(--red);}
+
+  .narrative{margin-top:20px;font-size:1rem;line-height:1.65;color:var(--text);}
+  .levels{margin-top:22px;display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--line);}
+  .levels div{padding:16px 0;}
+  .levels div:first-child{border-right:1px solid var(--line);padding-right:14px;}
+  .levels div:last-child{padding-left:14px;}
+  .levels .k{font-size:0.72rem;color:var(--muted);text-transform:uppercase;}
+  .levels .v{margin-top:5px;font-size:1.08rem;font-weight:600;}
+
+  .disclaimer{margin-top:28px;padding:16px 18px;border:1px solid var(--line);border-radius:8px;color:var(--muted);font-size:0.83rem;line-height:1.55;}
+  .disclaimer strong{color:var(--text);}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="brand">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 2 20 6v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-4Z" stroke="#8B7CF6" stroke-width="1.4"/></svg>
+      XAU Guardian <span>· aperçu du marché</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:18px;">
+      <a href="https://t.me/+-aD8_q-5Qf9lNTU0" target="_blank" rel="noopener" style="color:var(--muted);text-decoration:none;font-size:0.9rem;">📢 Telegram</a>
+      <a class="back" href="dashboard.html">← Tableau de bord</a>
+    </div>
+  </div>
+</nav>
+
+<main>
+  <div class="wrap">
+    <h1>📊 Aperçu du marché</h1>
+    <p class="sub">Une lecture en langage clair de la tendance récente, de la volatilité et des zones clés d'un instrument — à partir de données de prix réelles.</p>
+
+    <div class="panel">
+      <div class="field-row">
+        <div style="flex:1;">
+          <label for="symbol">Instrument</label>
+          <input type="text" id="symbol" value="XAU/USD" placeholder="ex. XAU/USD">
+        </div>
+        <button class="analyze" id="analyze-btn">Analyser</button>
+      </div>
+
+      <div class="msg" id="msg"></div>
+      <div class="config-warning" id="config-warning" style="display:none;">
+        Clé API TwelveData non configurée. Renseigne-la dans <code>twelvedata-config.js</code> pour activer l'analyse.
+      </div>
+
+      <div class="result" id="result">
+        <div class="badges">
+          <span class="badge" id="badge-trend">—</span>
+          <span class="badge" id="badge-vol">—</span>
+        </div>
+        <p class="narrative" id="narrative"></p>
+        <div class="levels">
+          <div><div class="k">Résistance proche</div><div class="v mono" id="v-res">—</div></div>
+          <div><div class="k">Support proche</div><div class="v mono" id="v-sup">—</div></div>
+        </div>
+      </div>
+
+      <div class="disclaimer">
+        <strong>Ce n'est pas un conseil financier.</strong> Cette lecture décrit l'état récent du marché à titre informatif. Elle ne prédit pas l'évolution future des prix.
+      </div>
+    </div>
+  </div>
+</main>
+
+<script type="module">
+  import { twelveDataApiKey } from "./twelvedata-config.js";
+
+  const msgEl = document.getElementById('msg');
+  const resultEl = document.getElementById('result');
+  const analyzeBtn = document.getElementById('analyze-btn');
+  const configWarning = document.getElementById('config-warning');
+
+  function isConfigured(key){ return key && !key.startsWith('REPLACE_'); }
+  if (!isConfigured(twelveDataApiKey)) configWarning.style.display = 'block';
+
+  function round2(n){ return Math.round(n * 100) / 100; }
+
+  function computeATR(candles){
+    let sum = 0, count = 0;
+    for (let i = 0; i < 14 && i + 1 < candles.length; i++){
+      const cur = candles[i], prev = candles[i + 1];
+      sum += Math.max(cur.high - cur.low, Math.abs(cur.high - prev.close), Math.abs(cur.low - prev.close));
+      count++;
+    }
+    return count > 0 ? sum / count : null;
+  }
+
+  async function fetchCandles(symbol){
+    const url = `https://api.twelvedata.com/time_series?symbol=${encodeURIComponent(symbol)}&interval=1h&outputsize=60&apikey=${twelveDataApiKey}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    if (data.status === 'error' || !data.values) throw new Error(data.message || "Symbole introuvable ou données indisponibles.");
+    return data.values
+      .map(v => ({ time: v.datetime, high: parseFloat(v.high), low: parseFloat(v.low), close: parseFloat(v.close) }))
+      .sort((a, b) => new Date(b.time) - new Date(a.time));
+  }
+
+  analyzeBtn.addEventListener('click', async () => {
+    const symbol = document.getElementById('symbol').value.trim();
+    msgEl.className = 'msg'; msgEl.textContent = '';
+    resultEl.classList.remove('show');
+
+    if (!symbol) { msgEl.className = 'msg error'; msgEl.textContent = 'Indique un instrument, par exemple XAU/USD.'; return; }
+    if (!isConfigured(twelveDataApiKey)) { msgEl.className = 'msg error'; msgEl.textContent = "Configure d'abord ta clé API dans twelvedata-config.js."; return; }
+
+    analyzeBtn.disabled = true;
+    msgEl.className = 'msg loading'; msgEl.textContent = 'Récupération des données…';
+
+    try {
+      const candles = await fetchCandles(symbol);
+      if (candles.length < 22) throw new Error("Pas assez de données pour analyser cet instrument.");
+
+      const recent = candles.slice(0, 20);
+      const older = candles.slice(20, 40).length > 0 ? candles.slice(20, 40) : candles.slice(20);
+      const lastClose = candles[0].close;
+      const closeTwentyAgo = candles[19].close;
+      const changePct = ((lastClose - closeTwentyAgo) / closeTwentyAgo) * 100;
+
+      let trend, trendLabel, trendClass;
+      if (changePct > 0.3) { trend = 'haussière'; trendLabel = 'Tendance haussière'; trendClass = 'up'; }
+      else if (changePct < -0.3) { trend = 'baissière'; trendLabel = 'Tendance baissière'; trendClass = 'down'; }
+      else { trend = 'latérale'; trendLabel = 'Marché latéral'; trendClass = 'flat'; }
+
+      const atrRecent = computeATR(candles);
+      const atrOlder = computeATR(candles.slice(20)) || atrRecent;
+      const volRatio = atrOlder > 0 ? atrRecent / atrOlder : 1;
+
+      let volLabel, volClass;
+      if (volRatio < 0.85) { volLabel = 'Volatilité faible'; volClass = 'vol-low'; }
+      else if (volRatio > 1.25) { volLabel = 'Volatilité élevée'; volClass = 'vol-high'; }
+      else { volLabel = 'Volatilité moyenne'; volClass = 'vol-med'; }
+
+      const resistance = Math.max(...recent.map(c => c.high));
+      const support = Math.min(...recent.map(c => c.low));
+
+      const trendBadge = document.getElementById('badge-trend');
+      trendBadge.className = 'badge ' + trendClass;
+      trendBadge.textContent = trendLabel;
+
+      const volBadge = document.getElementById('badge-vol');
+      volBadge.className = 'badge ' + volClass;
+      volBadge.textContent = volLabel;
+
+      document.getElementById('narrative').textContent =
+        `${symbol.toUpperCase()} évolue en tendance ${trend} sur les dernières heures (variation de ${changePct > 0 ? '+' : ''}${round2(changePct)}% sur la fenêtre observée), avec une volatilité jugée ${volLabel.toLowerCase().replace('volatilité ', '')}. Le prix actuel se situe entre un support proche à ${round2(support)} et une résistance proche à ${round2(resistance)}.`;
+
+      document.getElementById('v-res').textContent = round2(resistance);
+      document.getElementById('v-sup').textContent = round2(support);
+
+      resultEl.classList.add('show');
+      msgEl.className = 'msg'; msgEl.textContent = '';
+    } catch (err) {
+      msgEl.className = 'msg error';
+      msgEl.textContent = err.message || "Une erreur est survenue.";
+    } finally {
+      analyzeBtn.disabled = false;
+    }
+  });
+</script>
+
+</body>
+</html>
