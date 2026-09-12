@@ -78,6 +78,16 @@
   .feat h3{font-size:1.15rem;color:var(--violet-bright);}
   .feat p{color:var(--muted);margin-top:8px;max-width:60ch;}
 
+  .why{padding:80px 0;border-bottom:1px solid var(--line);}
+  .why h2{font-size:2rem;max-width:18ch;}
+  .why-grid{margin-top:44px;display:grid;grid-template-columns:repeat(4,1fr);gap:20px;}
+  @media (max-width:900px){ .why-grid{grid-template-columns:repeat(2,1fr);} }
+  @media (max-width:520px){ .why-grid{grid-template-columns:1fr;} }
+  .why-card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:22px;}
+  .why-card .emoji{font-size:1.6rem;}
+  .why-card h3{margin-top:12px;font-size:1rem;}
+  .why-card p{color:var(--muted);margin-top:8px;font-size:0.88rem;}
+
   .split{padding:80px 0;border-bottom:1px solid var(--line);}
   .split .wrap{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;}
   @media (max-width:860px){ .split .wrap{grid-template-columns:1fr;} }
@@ -132,9 +142,10 @@
       <a href="#fonctionnalites">Fonctionnalités</a>
       <a href="tarifs.html">Tarifs</a>
       <a href="faq.html">FAQ</a>
-      <a href="assistant.html">Assistant IA</a>
+      <a href="assistant.html">🤖 Assistant IA</a>
     </div>
     <div class="navcta">
+      <a class="nav-ghost" href="https://t.me/+-aD8_q-5Qf9lNTU0" target="_blank" rel="noopener">📢 Telegram</a>
       <a class="nav-ghost" href="auth.html">Connexion</a>
       <a class="nav-cta" href="auth.html">Créer un compte</a>
     </div>
@@ -149,7 +160,7 @@
       <p class="lead">XAU Guardian surveille le marché de l'or 24h/24, calcule des niveaux d'entrée à partir de données réelles, et répond à vos questions grâce à un assistant IA intégré.</p>
       <div class="hero-ctas">
         <a class="btn-primary" href="auth.html">Créer un compte gratuit</a>
-        <a class="btn-ghost" href="#comment-ca-marche">Voir comment ça marche</a>
+        <a class="btn-ghost" href="https://t.me/+-aD8_q-5Qf9lNTU0" target="_blank" rel="noopener">📢 Rejoindre le canal Telegram</a>
       </div>
     </div>
     <div class="alert-card">
@@ -172,17 +183,17 @@
     <div class="step-list">
       <div class="step">
         <div class="num">01</div>
-        <h3>Créez votre compte</h3>
+        <h3>📝 Créez votre compte</h3>
         <p>Inscription en quelques secondes. Vous rejoignez le canal Telegram XAU Guardian et accédez à votre tableau de bord.</p>
       </div>
       <div class="step">
         <div class="num">02</div>
-        <h3>Générez des niveaux</h3>
+        <h3>📐 Générez des niveaux</h3>
         <p>Utilisez l'outil intégré pour calculer une entrée, un stop et deux objectifs à partir de données de prix réelles.</p>
       </div>
       <div class="step">
         <div class="num">03</div>
-        <h3>Posez vos questions</h3>
+        <h3>💬 Posez vos questions</h3>
         <p>L'assistant IA répond à vos questions sur le fonctionnement du site, les concepts de trading, ou un niveau généré.</p>
       </div>
     </div>
@@ -194,20 +205,48 @@
     <h2>Ce que propose XAU Guardian</h2>
     <div class="feat-row">
       <div class="feat">
-        <h3>Alertes XAUUSD en continu</h3>
+        <h3>⚡ Alertes XAUUSD en continu</h3>
         <p>Le marché de l'or est analysé en permanence ; chaque signal est publié avec son niveau d'entrée, son stop et son objectif.</p>
       </div>
       <div class="feat">
-        <h3>Générateur de niveaux</h3>
+        <h3>📐 Générateur de niveaux</h3>
         <p>Entrez un instrument et un horizon, l'outil calcule une entrée, un stop et deux objectifs à partir de la volatilité réelle du marché.</p>
       </div>
       <div class="feat">
-        <h3>Assistant IA intégré</h3>
+        <h3>🤖 Assistant IA intégré</h3>
         <p>Posez une question sur un terme de trading, le fonctionnement du site, ou pour mieux comprendre un niveau généré.</p>
       </div>
       <div class="feat">
-        <h3>Historique transparent</h3>
+        <h3>🗂️ Historique transparent</h3>
         <p>Chaque alerte reste visible dans votre espace, qu'elle ait atteint son objectif, touché son stop, ou soit encore en cours.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="why">
+  <div class="wrap">
+    <h2>Pourquoi rejoindre XAU Guardian</h2>
+    <div class="why-grid">
+      <div class="why-card">
+        <div class="emoji">🛡️</div>
+        <h3>Transparence</h3>
+        <p>Chaque niveau affiché explique comment il a été calculé, sans boîte noire.</p>
+      </div>
+      <div class="why-card">
+        <div class="emoji">📊</div>
+        <h3>Données réelles</h3>
+        <p>Les calculs s'appuient sur de vraies données de marché, pas sur des captures d'écran.</p>
+      </div>
+      <div class="why-card">
+        <div class="emoji">🔔</div>
+        <h3>Alertes en direct</h3>
+        <p>Le canal Telegram diffuse les signaux dès qu'ils sont détectés, jour et nuit.</p>
+      </div>
+      <div class="why-card">
+        <div class="emoji">💬</div>
+        <h3>Toujours une réponse</h3>
+        <p>L'assistant intégré explique les concepts et le fonctionnement du site à tout moment.</p>
       </div>
     </div>
   </div>
@@ -269,14 +308,20 @@
   <div class="wrap">
     <h2>Rejoignez le canal avant le prochain signal</h2>
     <p>Gratuit à la création du compte.</p>
-    <div class="hero-ctas"><a class="btn-primary" href="auth.html">Créer un compte</a></div>
+    <div class="hero-ctas">
+      <a class="btn-primary" href="auth.html">Créer un compte</a>
+      <a class="btn-ghost" href="https://t.me/+-aD8_q-5Qf9lNTU0" target="_blank" rel="noopener">📢 Rejoindre sur Telegram</a>
+    </div>
   </div>
 </section>
 
 <footer>
   <div class="wrap">
     <span>XAU Guardian</span>
-    <span>Signaux XAUUSD · Générateur de niveaux · Assistant IA</span>
+    <span>
+      <a href="https://t.me/+-aD8_q-5Qf9lNTU0" target="_blank" rel="noopener" style="color:var(--muted);text-decoration:none;">📢 Telegram</a>
+      &nbsp;·&nbsp; Signaux XAUUSD · Générateur de niveaux · Assistant IA
+    </span>
   </div>
 </footer>
 
