@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Connexion — XAU Guardian</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0E1512; --panel:#16211C; --line:#2A3931;
+    --gold:#C9A659; --gold-bright:#E8C878;
+    --text:#EDEAE2; --muted:#8B9691; --rust:#C1543F;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;min-height:100vh;background:var(--bg);color:var(--text);
+    font-family:'IBM Plex Sans',sans-serif;display:grid;grid-template-columns:1fr 1fr;
+  }
+  @media (max-width:860px){ body{grid-template-columns:1fr;} .side{display:none;} }
+  h1,h2{font-family:'Newsreader',serif;font-weight:500;margin:0;}
+
+  .side{
+    background:var(--panel);border-right:1px solid var(--line);
+    display:flex;flex-direction:column;justify-content:space-between;
+    padding:48px;
+  }
+  .brand{display:flex;align-items:center;gap:10px;font-family:'Newsreader',serif;font-size:1.1rem;}
+  .brand-mark{width:24px;height:24px;flex:none;}
+  .side blockquote{
+    font-family:'Newsreader',serif;font-style:italic;font-size:1.5rem;line-height:1.4;
+    color:var(--text);max-width:32ch;margin:0;
+  }
+  .side .cite{margin-top:16px;color:var(--muted);font-size:0.88rem;font-style:normal;}
+  .side .foot{color:var(--muted);font-size:0.82rem;}
+
+  .form-col{display:flex;align-items:center;justify-content:center;padding:40px 24px;}
+  .form-box{width:100%;max-width:380px;}
+  .form-box a.brand-mobile{display:none;}
+  @media (max-width:860px){
+    .form-box a.brand-mobile{display:flex;align-items:center;gap:10px;font-family:'Newsreader',serif;font-size:1.1rem;margin-bottom:36px;text-decoration:none;color:var(--text);}
+  }
+  .tabs{display:flex;border:1px solid var(--line);border-radius:4px;overflow:hidden;margin-bottom:28px;}
+  .tab{flex:1;text-align:center;padding:11px 0;font-size:0.92rem;color:var(--muted);cursor:pointer;background:transparent;border:none;font-family:inherit;}
+  .tab.active{background:var(--gold);color:#161E19;font-weight:600;}
+  h2{font-size:1.5rem;}
+  .form-box p.sub{color:var(--muted);margin-top:8px;font-size:0.92rem;}
+
+  form{margin-top:26px;display:flex;flex-direction:column;gap:16px;}
+  label{font-size:0.85rem;color:var(--muted);display:block;margin-bottom:6px;}
+  input{
+    width:100%;background:var(--panel);border:1px solid var(--line);color:var(--text);
+    padding:12px 13px;border-radius:4px;font-size:0.96rem;font-family:inherit;
+  }
+  input:focus{outline:2px solid var(--gold);outline-offset:1px;border-color:var(--gold);}
+  button.submit{
+    margin-top:6px;background:var(--gold);color:#161E19;border:none;
+    padding:13px;border-radius:4px;font-weight:600;font-size:0.98rem;cursor:pointer;font-family:inherit;
+  }
+  button.submit:hover{background:var(--gold-bright);}
+  button.submit:disabled{opacity:0.55;cursor:not-allowed;}
+
+  .msg{font-size:0.88rem;padding:10px 12px;border-radius:4px;margin-top:16px;display:none;}
+  .msg.error{display:block;background:rgba(193,84,63,0.14);color:#E0897B;border:1px solid rgba(193,84,63,0.35);}
+  .msg.ok{display:block;background:rgba(110,154,124,0.14);color:#9FC6AC;border:1px solid rgba(110,154,124,0.35);}
+
+  .config-warning{
+    margin-top:24px;font-size:0.82rem;color:var(--muted);
+    border-top:1px solid var(--line);padding-top:16px;
+  }
+  .config-warning code{color:var(--gold-bright);}
+</style>
+</head>
+<body>
+
+<div class="side">
+  <div class="brand">
+    <svg class="brand-mark" viewBox="0 0 24 24" fill="none">
+      <path d="M12 2 20 6v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-4Z" stroke="#C9A659" stroke-width="1.4"/>
+      <circle cx="12" cy="11" r="3" stroke="#E8C878" stroke-width="1.2"/>
+    </svg>
+    XAU Guardian
+  </div>
+  <blockquote>
+    « L'or ne prévient jamais avant de bouger. Le Guardian, si. »
+    <div class="cite">— canal XAU Guardian</div>
+  </blockquote>
+  <div class="foot">Alertes XAUUSD en direct sur Telegram.</div>
+</div>
+
+<div class="form-col">
+  <div class="form-box">
+    <a class="brand-mobile" href="index.html">
+      <svg class="brand-mark" width="22" height="22" viewBox="0 0 24 24" fill="none">
+        <path d="M12 2 20 6v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-4Z" stroke="#C9A659" stroke-width="1.4"/>
+      </svg>
+      XAU Guardian
+    </a>
+
+    <div class="tabs">
+      <button class="tab active" data-mode="login">Connexion</button>
+      <button class="tab" data-mode="signup">Créer un compte</button>
+    </div>
+
+    <h2 id="form-title">Content de vous revoir</h2>
+    <p class="sub" id="form-sub">Connectez-vous pour retrouver vos alertes.</p>
+
+    <form id="auth-form">
+      <div>
+        <label for="email">E-mail</label>
+        <input type="email" id="email" required autocomplete="email">
+      </div>
+      <div>
+        <label for="password">Mot de passe</label>
+        <input type="password" id="password" required autocomplete="current-password" minlength="6">
+      </div>
+      <button type="submit" class="submit" id="submit-btn">Se connecter</button>
+    </form>
+
+    <div class="msg" id="msg"></div>
+
+    <div class="config-warning" id="config-warning" style="display:none;">
+      Firebase n'est pas encore configuré. Renseignez vos clés dans <code>firebase-config.js</code> pour activer les vrais comptes.
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+  import {
+    getAuth,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+  import { firebaseConfig } from "./firebase-config.js";
+
+  const msgEl = document.getElementById('msg');
+  const warningEl = document.getElementById('config-warning');
+  const form = document.getElementById('auth-form');
+  const submitBtn = document.getElementById('submit-btn');
+  const title = document.getElementById('form-title');
+  const sub = document.getElementById('form-sub');
+  const tabs = document.querySelectorAll('.tab');
+
+  let mode = 'login';
+  let auth = null;
+
+  function isConfigured(cfg){
+    return cfg && cfg.apiKey && !cfg.apiKey.startsWith('REPLACE_');
+  }
+
+  if (isConfigured(firebaseConfig)) {
+    const app = initializeApp(firebaseConfig);
+    auth = getAuth(app);
+    onAuthStateChanged(auth, (user) => {
+      if (user) window.location.href = "dashboard.html";
+    });
+  } else {
+    warningEl.style.display = 'block';
+  }
+
+  function setMode(next){
+    mode = next;
+    tabs.forEach(t => t.classList.toggle('active', t.dataset.mode === mode));
+    if (mode === 'login') {
+      title.textContent = 'Content de vous revoir';
+      sub.textContent = 'Connectez-vous pour retrouver vos alertes.';
+      submitBtn.textContent = 'Se connecter';
+    } else {
+      title.textContent = 'Créer un compte';
+      sub.textContent = 'Rejoignez XAU Guardian en quelques secondes.';
+      submitBtn.textContent = 'Créer mon compte';
+    }
+    msgEl.className = 'msg';
+    msgEl.textContent = '';
+  }
+
+  tabs.forEach(t => t.addEventListener('click', () => setMode(t.dataset.mode)));
+
+  function showError(err){
+    const map = {
+      'auth/email-already-in-use': 'Un compte existe déjà avec cet e-mail.',
+      'auth/invalid-email': 'Adresse e-mail invalide.',
+      'auth/weak-password': 'Le mot de passe doit contenir au moins 6 caractères.',
+      'auth/invalid-credential': 'E-mail ou mot de passe incorrect.',
+      'auth/user-not-found': 'E-mail ou mot de passe incorrect.',
+      'auth/wrong-password': 'E-mail ou mot de passe incorrect.',
+      'auth/too-many-requests': 'Trop de tentatives. Réessayez dans quelques minutes.'
+    };
+    msgEl.className = 'msg error';
+    msgEl.textContent = map[err.code] || 'Une erreur est survenue. Réessayez.';
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!auth) {
+      msgEl.className = 'msg error';
+      msgEl.textContent = "Configurez Firebase avant de créer un compte (voir firebase-config.js).";
+      return;
+    }
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+
+    submitBtn.disabled = true;
+    msgEl.className = 'msg';
+    msgEl.textContent = '';
+
+    try {
+      if (mode === 'signup') {
+        await createUserWithEmailAndPassword(auth, email, password);
+      } else {
+        await signInWithEmailAndPassword(auth, email, password);
+      }
+      msgEl.className = 'msg ok';
+      msgEl.textContent = 'Connecté. Redirection…';
+    } catch (err) {
+      showError(err);
+    } finally {
+      submitBtn.disabled = false;
+    }
+  });
+</script>
+
+</body>
+</html>
