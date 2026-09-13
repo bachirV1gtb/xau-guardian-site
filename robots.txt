@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://bachirv1gtb.github.io/xau-guardian-site/sitemap.xml
