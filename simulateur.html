@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%230B0F1F'/%3E%3Cpath d='M12 3 19 6.5V12c0 4.5-3 7.8-7 9-4-1.2-7-4.5-7-9V6.5L12 3Z' fill='%238B7CF6'/%3E%3C/svg%3E">
-<title>Simulateur de trading — XAU Guardian</title>
+<title>Compte démo — XAU Guardian</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -91,17 +91,10 @@
 
 <main>
   <div class="wrap">
-    <h1>🎮 Simulateur de trading virtuel</h1>
-    <p class="sub">Suis les vrais signaux du canal avec un capital fictif, sans rien risquer. Ta performance se met à jour automatiquement dès qu'un signal est résolu par le bot.</p>
+    <h1>🎮 Compte démo — entraîne-toi sans risque</h1>
+    <p class="sub">Un compte fictif de 10 000€ pour t'entraîner avec les vraies alertes du canal, sans jamais toucher à ton argent réel. Clique sur un signal ci-dessous pour "l'ajouter à ton compte démo" ; ton solde se met à jour tout seul dès que le signal atteint son objectif ou son stop.</p>
 
     <div id="loading" class="loading">Vérification de votre accès…</div>
-
-    <div id="locked" class="locked" style="display:none;">
-      <div class="emoji">🔒</div>
-      <h2>Réservé aux Membres</h2>
-      <p>Le simulateur de trading virtuel est inclus dans l'abonnement Membre.</p>
-      <a class="btn" href="tarifs.html">Voir l'abonnement Membre</a>
-    </div>
 
     <div id="content" class="content">
       <div class="stats">
@@ -148,19 +141,6 @@
     if (!user) { window.location.href = "auth.html"; return; }
     currentUser = user;
     document.getElementById('loading').style.display = 'none';
-
-    try {
-      const memberDoc = await getDoc(doc(db, 'members', user.email));
-      if (!memberDoc.exists()) {
-        document.getElementById('locked').style.display = 'block';
-        return;
-      }
-    } catch (e) {
-      console.error('Erreur de vérification du statut Membre :', e);
-      document.getElementById('locked').style.display = 'block';
-      return;
-    }
-
     document.getElementById('content').classList.add('show');
     try {
       await refreshEverything();
@@ -274,8 +254,8 @@
         <div class="signal-top">
           <span class="pair">${s.symbol} · ${actionLabel}</span>
           ${alreadyFollowed
-            ? '<span class="followed-tag">✓ Déjà suivi</span>'
-            : `<button class="follow-btn" data-id="${s.id}">Suivre ce signal</button>`}
+            ? '<span class="followed-tag">✓ Déjà dans ton compte démo</span>'
+            : `<button class="follow-btn" data-id="${s.id}">Ajouter à mon compte démo</button>`}
         </div>
         <div class="signal-levels">
           <span>Entrée <strong>${s.entry}</strong></span>
