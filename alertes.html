@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%230B0F1F'/%3E%3Cpath d='M12 3 19 6.5V12c0 4.5-3 7.8-7 9-4-1.2-7-4.5-7-9V6.5L12 3Z' fill='%238B7CF6'/%3E%3C/svg%3E">
+<title>Alertes de prix — XAU Guardian</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0B0F1F; --panel:#131A2E; --panel-2:#1A2340; --line:#262F4D;
+    --violet:#8B7CF6; --violet-bright:#A99BFF;
+    --text:#E7E9F5; --muted:#8890AA; --green:#34D399; --red:#F87171; --amber:#FBBF24;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;min-height:100vh;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+  a{color:inherit;}
+  .wrap{max-width:720px;margin:0 auto;padding:0 24px;}
+  nav{border-bottom:1px solid var(--line);}
+  nav .wrap{min-height:66px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;padding-top:10px;padding-bottom:10px;}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:1.02rem;flex:none;}
+  a.back{color:var(--muted);text-decoration:none;font-size:0.9rem;}
+  a.back:hover{color:var(--violet-bright);}
+
+  main{padding:44px 0 70px;}
+  h1{font-size:1.5rem;font-weight:600;margin:0 0 6px;}
+  .sub{color:var(--muted);font-size:0.94rem;margin:0 0 20px;max-width:60ch;}
+
+  .loading{text-align:center;color:var(--muted);padding:60px 0;}
+
+  .locked{margin-top:20px;text-align:center;padding:60px 30px;background:var(--panel);border:1px solid var(--line);border-radius:12px;}
+  .locked .emoji{font-size:2.4rem;}
+  .locked h2{margin-top:16px;font-size:1.4rem;}
+  .locked p{color:var(--muted);max-width:44ch;margin:12px auto 24px;}
+  .locked .btn{display:inline-flex;background:var(--violet);color:#0E1120;padding:13px 26px;border-radius:6px;text-decoration:none;font-weight:600;}
+
+  .content{display:none;}
+  .content.show{display:block;}
+
+  .notice{padding:14px 16px;border:1px solid var(--line);border-radius:8px;color:var(--muted);font-size:0.85rem;margin-bottom:20px;line-height:1.5;}
+  .notice strong{color:var(--text);}
+
+  .status-bar{display:flex;align-items:center;gap:10px;margin-bottom:20px;font-size:0.86rem;color:var(--muted);}
+  .status-dot{width:8px;height:8px;border-radius:50%;background:var(--muted);}
+  .status-dot.active{background:var(--green);}
+  .status-dot.active::after{content:'';}
+
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:24px;margin-bottom:20px;}
+  .field-row{display:grid;grid-template-columns:1.2fr 1fr 1fr auto;gap:12px;align-items:flex-end;}
+  @media (max-width:640px){ .field-row{grid-template-columns:1fr 1fr;} }
+  label{display:block;font-size:0.8rem;color:var(--muted);margin-bottom:6px;}
+  input[type=text], input[type=number], select{
+    width:100%;background:var(--panel-2);border:1px solid var(--line);color:var(--text);
+    padding:10px 11px;border-radius:6px;font-size:0.92rem;font-family:inherit;
+  }
+  input:focus, select:focus{outline:2px solid var(--violet);outline-offset:1px;}
+  button.add{background:var(--violet);color:#0E1120;border:none;padding:10px 18px;border-radius:6px;font-weight:600;font-size:0.9rem;cursor:pointer;font-family:inherit;white-space:nowrap;}
+  button.add:hover{background:var(--violet-bright);}
+  button.add:disabled{opacity:0.55;cursor:not-allowed;}
+
+  .msg{margin-top:14px;font-size:0.88rem;padding:10px 12px;border-radius:6px;display:none;}
+  .msg.error{display:block;background:rgba(248,113,113,0.12);color:#F5A3A3;border:1px solid rgba(248,113,113,0.3);}
+  .msg.ok{display:block;background:rgba(52,211,153,0.12);color:#9FDCC0;border:1px solid rgba(52,211,153,0.3);}
+
+  .alert-list{display:flex;flex-direction:column;gap:10px;}
+  .alert-item{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px 18px;display:flex;justify-content:space-between;align-items:center;}
+  .alert-item.triggered{border-color:var(--green);}
+  .alert-item .info{font-size:0.94rem;}
+  .alert-item .info .sym{font-weight:600;}
+  .alert-item .info .cond{color:var(--muted);margin-left:8px;}
+  .alert-item .badge{font-size:0.76rem;padding:3px 10px;border-radius:14px;background:rgba(52,211,153,0.14);color:var(--green);margin-left:10px;}
+  .alert-item .remove{background:transparent;border:none;color:var(--muted);cursor:pointer;font-size:1rem;}
+  .alert-item .remove:hover{color:var(--red);}
+  .empty-state{color:var(--muted);font-size:0.9rem;text-align:center;padding:20px 0;}
+
+  .config-warning{margin-top:18px;font-size:0.83rem;color:var(--muted);border:1px solid var(--line);border-radius:8px;padding:14px 16px;}
+  .config-warning code{color:var(--violet-bright);}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="brand">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 2 20 6v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-4Z" stroke="#8B7CF6" stroke-width="1.4"/></svg>
+      XAU Guardian <span style="color:var(--muted);font-weight:400;font-size:0.85rem;">· alertes de prix</span>
+    </div>
+    <a class="back" href="dashboard.html">← Tableau de bord</a>
+  </div>
+</nav>
+
+<main>
+  <div class="wrap">
+    <h1>🔔 Alertes de prix personnalisées</h1>
+    <p class="sub">Définis un prix cible sur un instrument. Le site te préviendra dès qu'il est atteint.</p>
+
+    <div id="loading" class="loading">Vérification de votre accès…</div>
+
+    <div id="locked" class="locked" style="display:none;">
+      <div class="emoji">🔒</div>
+      <h2>Réservé aux Membres</h2>
+      <p>Les alertes de prix personnalisées sont incluses dans l'abonnement Membre.</p>
+      <a class="btn" href="tarifs.html">Voir l'abonnement Membre</a>
+    </div>
+
+    <div id="content" class="content">
+      <div class="notice">
+        <strong>Important :</strong> cette surveillance fonctionne uniquement pendant que cette page reste ouverte dans ton navigateur. Ce n'est pas une notification envoyée sur ton téléphone quand le site est fermé.
+      </div>
+
+      <div class="status-bar">
+        <span class="status-dot" id="status-dot"></span>
+        <span id="status-text">Surveillance inactive</span>
+      </div>
+
+      <div class="panel">
+        <div class="field-row">
+          <div>
+            <label for="symbol">Instrument</label>
+            <input type="text" id="symbol" value="XAU/USD" placeholder="ex. XAU/USD">
+          </div>
+          <div>
+            <label for="direction">Condition</label>
+            <select id="direction">
+              <option value="above">Passe au-dessus de</option>
+              <option value="below">Passe en-dessous de</option>
+            </select>
+          </div>
+          <div>
+            <label for="target">Prix cible</label>
+            <input type="number" id="target" step="any" placeholder="ex. 2650">
+          </div>
+          <button class="add" id="add-btn">Ajouter</button>
+        </div>
+        <div class="msg" id="msg"></div>
+        <div class="config-warning" id="config-warning" style="display:none;">
+          Clé API TwelveData non configurée. Renseigne-la dans <code>twelvedata-config.js</code>.
+        </div>
+      </div>
+
+      <div class="alert-list" id="alert-list">
+        <div class="empty-state">Aucune alerte pour l'instant.</div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+  import { getFirestore, doc, getDoc, collection, query, where, getDocs, addDoc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+  import { firebaseConfig } from "./firebase-config.js";
+  import { twelveDataApiKey } from "./twelvedata-config.js";
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  let currentUser = null;
+  let myAlerts = [];
+  let pollTimer = null;
+
+  function isConfigured(key){ return key && !key.startsWith('REPLACE_'); }
+  if (!isConfigured(twelveDataApiKey)) document.getElementById('config-warning').style.display = 'block';
+
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) { window.location.href = "auth.html"; return; }
+    currentUser = user;
+    document.getElementById('loading').style.display = 'none';
+
+    try {
+      const memberDoc = await getDoc(doc(db, 'members', user.email));
+      if (memberDoc.exists()) {
+        document.getElementById('content').classList.add('show');
+        await loadAlerts();
+        if ('Notification' in window && Notification.permission === 'default') {
+          Notification.requestPermission();
+        }
+        startPolling();
+      } else {
+        document.getElementById('locked').style.display = 'block';
+      }
+    } catch (e) {
+      document.getElementById('locked').style.display = 'block';
+    }
+  });
+
+  async function loadAlerts(){
+    const q = query(collection(db, 'alerts'), where('email', '==', currentUser.email));
+    const snap = await getDocs(q);
+    myAlerts = [];
+    snap.forEach(d => myAlerts.push({ id: d.id, ...d.data() }));
+    renderAlerts();
+  }
+
+  function renderAlerts(){
+    const listEl = document.getElementById('alert-list');
+    if (myAlerts.length === 0) {
+      listEl.innerHTML = '<div class="empty-state">Aucune alerte pour l\'instant.</div>';
+      return;
+    }
+    listEl.innerHTML = '';
+    myAlerts.forEach(a => {
+      const div = document.createElement('div');
+      div.className = 'alert-item' + (a.triggered ? ' triggered' : '');
+      div.innerHTML = `
+        <div class="info">
+          <span class="sym mono">${a.symbol}</span>
+          <span class="cond">${a.direction === 'above' ? 'au-dessus de' : 'en-dessous de'} ${a.target}</span>
+          ${a.triggered ? '<span class="badge">Déclenchée</span>' : ''}
+        </div>
+        <button class="remove" data-id="${a.id}" aria-label="Supprimer">✕</button>
+      `;
+      listEl.appendChild(div);
+    });
+    listEl.querySelectorAll('.remove').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        await deleteDoc(doc(db, 'alerts', btn.dataset.id));
+        await loadAlerts();
+      });
+    });
+  }
+
+  document.getElementById('add-btn').addEventListener('click', async () => {
+    const symbol = document.getElementById('symbol').value.trim();
+    const direction = document.getElementById('direction').value;
+    const target = parseFloat(document.getElementById('target').value);
+    const msgEl = document.getElementById('msg');
+    msgEl.className = 'msg'; msgEl.textContent = '';
+
+    if (!symbol || isNaN(target)) {
+      msgEl.className = 'msg error';
+      msgEl.textContent = 'Renseigne un instrument et un prix cible valide.';
+      return;
+    }
+
+    await addDoc(collection(db, 'alerts'), {
+      email: currentUser.email,
+      symbol: symbol.toUpperCase(),
+      direction,
+      target,
+      triggered: false,
+      createdAt: new Date().toISOString()
+    });
+
+    document.getElementById('target').value = '';
+    msgEl.className = 'msg ok';
+    msgEl.textContent = 'Alerte ajoutée.';
+    await loadAlerts();
+  });
+
+  async function fetchPrice(symbol){
+    const url = `https://api.twelvedata.com/price?symbol=${encodeURIComponent(symbol)}&apikey=${twelveDataApiKey}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    if (data.status === 'error' || !data.price) return null;
+    return parseFloat(data.price);
+  }
+
+  function notify(alertItem, price){
+    const title = `${alertItem.symbol} a atteint ${price}`;
+    const body = `Condition : ${alertItem.direction === 'above' ? 'au-dessus de' : 'en-dessous de'} ${alertItem.target}`;
+    if ('Notification' in window && Notification.permission === 'granted') {
+      new Notification(title, { body });
+    }
+  }
+
+  async function pollOnce(){
+    if (!isConfigured(twelveDataApiKey) || myAlerts.length === 0) return;
+
+    document.getElementById('status-dot').classList.add('active');
+    document.getElementById('status-text').textContent = 'Surveillance active — dernière vérification à ' + new Date().toLocaleTimeString();
+
+    const uniqueSymbols = [...new Set(myAlerts.filter(a => !a.triggered).map(a => a.symbol))];
+    const prices = {};
+    for (const sym of uniqueSymbols) {
+      const p = await fetchPrice(sym);
+      if (p !== null) prices[sym] = p;
+    }
+
+    for (const a of myAlerts) {
+      if (a.triggered) continue;
+      const price = prices[a.symbol];
+      if (price === undefined) continue;
+      const hit = a.direction === 'above' ? price >= a.target : price <= a.target;
+      if (hit) {
+        notify(a, price);
+        await updateDoc(doc(db, 'alerts', a.id), { triggered: true });
+        a.triggered = true;
+      }
+    }
+    renderAlerts();
+  }
+
+  function startPolling(){
+    pollOnce();
+    pollTimer = setInterval(pollOnce, 60000);
+  }
+</script>
+
+</body>
+</html>
