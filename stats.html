@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%230B0F1F'/%3E%3Cpath d='M12 3 19 6.5V12c0 4.5-3 7.8-7 9-4-1.2-7-4.5-7-9V6.5L12 3Z' fill='%238B7CF6'/%3E%3C/svg%3E">
+<title>Résultats en direct — XAU Guardian</title>
+<meta name="description" content="Statistiques réelles du bot XAU Guardian : taux de réussite et pips cumulés, calculés automatiquement à partir des signaux envoyés.">
+<link rel="canonical" href="https://bachirv1gtb.github.io/xau-guardian-site/stats.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0B0F1F; --panel:#131A2E; --panel-2:#1A2340; --line:#262F4D;
+    --blue:#4C7EFF; --violet:#8B7CF6; --violet-bright:#A99BFF;
+    --text:#E7E9F5; --muted:#8890AA; --green:#34D399; --red:#F87171;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+  h1,h2,h3{font-weight:600;margin:0;letter-spacing:-0.01em;}
+  a{color:inherit;}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 28px;}
+
+  nav{position:sticky;top:0;z-index:20;background:rgba(11,15,31,0.88);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);}
+  nav .wrap{display:flex;align-items:center;justify-content:space-between;height:68px;}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:1.1rem;text-decoration:none;color:var(--text);}
+  .navlinks{display:flex;gap:26px;font-size:0.92rem;color:var(--muted);}
+  .navlinks a:hover{color:var(--violet-bright);}
+  .nav-cta{display:inline-flex;align-items:center;gap:8px;background:var(--violet);color:#0E1120;padding:9px 18px;border-radius:6px;font-size:0.9rem;font-weight:600;text-decoration:none;}
+  .nav-cta:hover{background:var(--violet-bright);}
+
+  .live-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);margin-right:7px;position:relative;top:-1px;}
+  .live-dot::after{content:'';position:absolute;inset:-4px;border-radius:50%;background:var(--green);opacity:0.5;animation:pulseDot 1.8s infinite;}
+  @keyframes pulseDot{0%{transform:scale(1);opacity:0.5;}100%{transform:scale(2.4);opacity:0;}}
+  @media (prefers-reduced-motion: reduce){ .live-dot::after{animation:none;display:none;} }
+
+  .hero{padding:64px 0 40px;border-bottom:1px solid var(--line);}
+  .eyebrow{color:var(--violet-bright);font-size:0.9rem;margin-bottom:14px;}
+  .hero h1{font-size:clamp(1.9rem,3.6vw,2.6rem);line-height:1.15;}
+  .hero p.lead{margin-top:16px;font-size:1.02rem;color:var(--muted);max-width:60ch;}
+
+  .stat-grid{padding:48px 0;display:grid;grid-template-columns:repeat(3,1fr);gap:20px;border-bottom:1px solid var(--line);}
+  @media (max-width:760px){ .stat-grid{grid-template-columns:1fr;} }
+  .stat-card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:26px;}
+  .stat-card .k{color:var(--muted);font-size:0.82rem;text-transform:uppercase;letter-spacing:0.03em;}
+  .stat-card .v{margin-top:10px;font-size:2.1rem;font-weight:600;}
+  .stat-card .v.green{color:var(--green);}
+  .stat-card .v.red{color:var(--red);}
+  .stat-card .note{margin-top:8px;color:var(--muted);font-size:0.82rem;}
+
+  .recent{padding:56px 0;}
+  .recent h2{font-size:1.5rem;}
+  .recent .sub{color:var(--muted);margin-top:8px;font-size:0.92rem;}
+  .signal-row{display:grid;grid-template-columns:90px 1fr 120px 110px;gap:14px;align-items:center;padding:16px 0;border-top:1px solid var(--line);font-size:0.92rem;}
+  @media (max-width:700px){ .signal-row{grid-template-columns:70px 1fr 90px;} .signal-row .date-col{display:none;} }
+  .signal-row .dir{font-weight:600;}
+  .signal-row .dir.buy{color:var(--green);}
+  .signal-row .dir.sell{color:var(--red);}
+  .signal-row .detail{color:var(--muted);}
+  .signal-row .pips{text-align:right;font-weight:600;}
+  .signal-row .pips.pos{color:var(--green);}
+  .signal-row .pips.neg{color:var(--red);}
+  .signal-row .status{text-align:right;color:var(--muted);font-size:0.82rem;}
+
+  .empty-state, .loading-state{padding:40px 0;color:var(--muted);text-align:center;}
+
+  .disclaimer{padding:36px 0;border-top:1px solid var(--line);color:var(--muted);font-size:0.85rem;}
+
+  footer{border-top:1px solid var(--line);padding:36px 0;color:var(--muted);font-size:0.85rem;}
+  footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="brand" href="index.html">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <path d="M12 2 20 6v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-4Z" stroke="#8B7CF6" stroke-width="1.4"/>
+        <circle cx="12" cy="11" r="3" stroke="#A99BFF" stroke-width="1.2"/>
+      </svg>
+      XAU Guardian
+    </a>
+    <div class="navlinks">
+      <a href="index.html">Accueil</a>
+      <a href="stats.html">Résultats</a>
+      <a href="backtest.html">Backtest</a>
+      <a href="tarifs.html">Tarifs</a>
+    </div>
+    <a class="nav-cta" href="https://t.me/+-aD8_q-5Qf9lNTU0" target="_blank" rel="noopener">📢 Rejoindre Telegram</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="wrap">
+    <div class="eyebrow"><span class="live-dot"></span>Calculé automatiquement à partir des signaux réels</div>
+    <h1>Nos résultats, sans filtre.</h1>
+    <p class="lead">Ces chiffres sont calculés en direct depuis l'historique des signaux envoyés sur le canal — pas une simulation, pas une sélection des meilleurs trades. Une position est comptée "gagnante" seulement si elle n'a jamais touché le stop loss.</p>
+  </div>
+</section>
+
+<section class="stat-grid wrap" id="stat-grid">
+  <div class="stat-card">
+    <div class="k">Taux de réussite</div>
+    <div class="v" id="stat-winrate">—</div>
+    <div class="note" id="stat-winrate-note">Chargement…</div>
+  </div>
+  <div class="stat-card">
+    <div class="k">Pips cumulés (positions clôturées)</div>
+    <div class="v" id="stat-pips">—</div>
+    <div class="note" id="stat-pips-note">Chargement…</div>
+  </div>
+  <div class="stat-card">
+    <div class="k">Positions suivies</div>
+    <div class="v" id="stat-count">—</div>
+    <div class="note" id="stat-count-note">Chargement…</div>
+  </div>
+</section>
+
+<section class="recent wrap">
+  <h2>Derniers signaux</h2>
+  <p class="sub">Les positions encore en cours n'entrent pas dans le taux de réussite tant qu'elles ne sont pas clôturées.</p>
+  <div id="recent-list">
+    <div class="loading-state">Chargement des signaux…</div>
+  </div>
+</section>
+
+<section class="disclaimer">
+  <div class="wrap">
+    Les performances passées ne préjugent pas des performances futures. Ces statistiques sont informatives et ne constituent pas un conseil en investissement personnalisé. Le trading comporte un risque de perte en capital.
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>XAU Guardian</span>
+    <span>
+      <a href="https://t.me/+-aD8_q-5Qf9lNTU0" target="_blank" rel="noopener" style="color:var(--muted);text-decoration:none;">📢 Telegram</a>
+      &nbsp;·&nbsp; Signaux XAUUSD · Générateur de niveaux · Assistant IA
+    </span>
+  </div>
+</footer>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+  import { getFirestore, collection, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+  import { firebaseConfig } from "./firebase-config.js";
+
+  const PIP_SIZE = 0.1;
+
+  function pipsBetween(a, b) {
+    return Math.round(Math.abs(a - b) / PIP_SIZE);
+  }
+
+  function classifySignal(doc) {
+    const levels = Array.isArray(doc.levels) ? doc.levels : [];
+    const levelsHit = Array.isArray(doc.levels_hit) ? doc.levels_hit : [];
+    const entry = doc.entry;
+    const status = doc.status || "";
+    const closed = !!doc.closed;
+
+    let pips = 0;
+    let anyLevelHit = false;
+    levelsHit.forEach((hit, i) => {
+      if (hit && levels[i] !== undefined) {
+        pips += pipsBetween(entry, levels[i]);
+        anyLevelHit = true;
+      }
+    });
+
+    const hitSL = status.includes("sl_hit");
+    if (hitSL && typeof doc.result_pips === "number") {
+      pips += doc.result_pips; // déjà négatif côté bot
+    } else if (status === "closed_flip" && typeof doc.result_pips === "number") {
+      pips += doc.result_pips;
+    }
+
+    let outcome = "open";
+    if (closed) {
+      if (hitSL && !anyLevelHit) outcome = "loss";
+      else if (!hitSL) outcome = "win";
+      else outcome = "mixed";
+    }
+
+    return { pips, outcome, closed };
+  }
+
+  async function loadStats() {
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const q = query(collection(db, "signals"), orderBy("created_at", "desc"), limit(300));
+    const snap = await getDocs(q);
+
+    const signals = [];
+    snap.forEach((docSnap) => {
+      signals.push({ id: docSnap.id, ...docSnap.data() });
+    });
+
+    if (signals.length === 0) {
+      document.getElementById("stat-winrate").textContent = "—";
+      document.getElementById("stat-winrate-note").textContent = "Pas encore de données.";
+      document.getElementById("stat-pips").textContent = "—";
+      document.getElementById("stat-pips-note").textContent = "Pas encore de données.";
+      document.getElementById("stat-count").textContent = "0";
+      document.getElementById("stat-count-note").textContent = "Aucun signal enregistré pour le moment.";
+      document.getElementById("recent-list").innerHTML = '<div class="empty-state">Aucun signal enregistré pour le moment.</div>';
+      return;
+    }
+
+    let closedCount = 0, openCount = 0, wins = 0, totalPips = 0;
+    const enriched = signals.map((s) => {
+      const c = classifySignal(s);
+      if (c.closed) {
+        closedCount++;
+        totalPips += c.pips;
+        if (c.outcome === "win") wins++;
+      } else {
+        openCount++;
+      }
+      return { ...s, ...c };
+    });
+
+    const winRate = closedCount > 0 ? (wins / closedCount) * 100 : 0;
+
+    document.getElementById("stat-winrate").textContent = closedCount > 0 ? `${winRate.toFixed(1)}%` : "—";
+    document.getElementById("stat-winrate").className = "v " + (winRate >= 50 ? "green" : "red");
+    document.getElementById("stat-winrate-note").textContent = `${wins} gagnantes sur ${closedCount} positions clôturées`;
+
+    document.getElementById("stat-pips").textContent = `${totalPips >= 0 ? "+" : ""}${totalPips}`;
+    document.getElementById("stat-pips").className = "v " + (totalPips >= 0 ? "green" : "red");
+    document.getElementById("stat-pips-note").textContent = "Sur les positions clôturées uniquement";
+
+    document.getElementById("stat-count").textContent = signals.length;
+    document.getElementById("stat-count-note").textContent = `${closedCount} clôturées · ${openCount} en cours`;
+
+    const listEl = document.getElementById("recent-list");
+    listEl.innerHTML = "";
+    enriched.slice(0, 15).forEach((s) => {
+      const row = document.createElement("div");
+      row.className = "signal-row";
+      const dirClass = s.action === "BUY" ? "buy" : "sell";
+      const dirLabel = s.action === "BUY" ? "ACHAT" : "VENTE";
+      const dateStr = s.candle_time ? s.candle_time.split(" ")[0] : "";
+      const pipsClass = s.pips >= 0 ? "pos" : "neg";
+      const pipsLabel = s.closed ? `${s.pips >= 0 ? "+" : ""}${s.pips} pips` : "—";
+      let statusLabel = "En cours";
+      if (s.closed) {
+        if (s.outcome === "win") statusLabel = "Gagnante";
+        else if (s.outcome === "loss") statusLabel = "Perdante";
+        else statusLabel = "Mixte";
+      }
+      row.innerHTML = `
+        <div class="dir ${dirClass}">${dirLabel}</div>
+        <div class="detail">XAU/USD · entrée ${Number(s.entry).toFixed(0)}</div>
+        <div class="date-col detail">${dateStr}</div>
+        <div class="pips ${pipsClass}">${pipsLabel}</div>
+      `;
+      listEl.appendChild(row);
+    });
+  }
+
+  loadStats().catch((err) => {
+    console.error("Erreur de chargement des statistiques :", err);
+    document.getElementById("recent-list").innerHTML =
+      '<div class="empty-state">Impossible de charger les statistiques pour le moment.</div>';
+  });
+</script>
+
+</body>
+</html>
