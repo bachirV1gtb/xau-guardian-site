@@ -139,6 +139,7 @@
       </div>
 
       <button class="analyze" id="analyze-btn">Analyser</button>
+      <button type="button" id="demo-btn" style="margin-top:10px;background:transparent;border:none;color:var(--muted);font-size:0.85rem;text-decoration:underline;cursor:pointer;font-family:inherit;">Voir un exemple de résultat</button>
 
       <div class="msg" id="msg"></div>
       <div class="config-warning" id="config-warning" style="display:none;">
@@ -331,6 +332,22 @@
     } finally {
       analyzeBtn.disabled = false;
     }
+  });
+
+  document.getElementById('demo-btn').addEventListener('click', () => {
+    document.getElementById('res-symbol').textContent = 'XAU/USD (exemple)';
+    const badge = document.getElementById('res-badge');
+    badge.className = 'badge up';
+    badge.textContent = 'Rupture haussière';
+    document.getElementById('res-note').textContent = 'Rupture haussière du plus haut des 20 dernières bougies (2 638.40) — exemple de démonstration.';
+    document.getElementById('v-entry').textContent = '2641.80';
+    document.getElementById('v-sl').textContent = '2636.20';
+    document.getElementById('v-tp1').textContent = '2649.30';
+    document.getElementById('v-tp2').textContent = '2660.90';
+    document.getElementById('res-rr').textContent = 'Ratio risque/récompense — Objectif 1 : 1:1 · Objectif 2 : 1:2.';
+    document.getElementById('share-btn').style.display = 'inline-block';
+    lastResult = { symbol: 'XAU/USD', direction: 'up', entry: 2641.80, sl: 2636.20, tp1: 2649.30, tp2: 2660.90 };
+    resultEl.classList.add('show');
   });
 
   document.getElementById('share-btn').addEventListener('click', () => {
