@@ -131,6 +131,11 @@
   .chat-msg.user{background:var(--panel-2);margin-left:auto;}
   .chat-msg.ai{background:rgba(139,124,246,0.12);color:var(--violet-bright);}
 
+  .backtest-cta{padding:70px 0;border-bottom:1px solid var(--line);text-align:center;background:var(--panel);}
+  .backtest-cta h2{font-size:1.8rem;max-width:26ch;margin:0 auto;}
+  .backtest-cta p{color:var(--muted);margin:16px auto 0;max-width:56ch;}
+  .backtest-cta .btn-primary{margin-top:28px;display:inline-flex;}
+
   .pricing-teaser{padding:80px 0;border-bottom:1px solid var(--line);}
   .pricing-teaser .head{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;}
   .pricing-teaser h2{font-size:2rem;}
@@ -174,6 +179,7 @@
     <div class="navlinks">
       <a href="#comment-ca-marche">Comment ça marche</a>
       <a href="#fonctionnalites">Fonctionnalités</a>
+      <a href="backtest.html">📈 Backtest</a>
       <a href="tarifs.html">Tarifs</a>
       <a href="faq.html">FAQ</a>
       <a href="assistant.html">🤖 Assistant IA</a>
@@ -320,6 +326,14 @@
       <div class="chat-msg user">Et un ratio risque/récompense de 1:2 ?</div>
       <div class="chat-msg ai">Vous risquez 1 pour viser 2 : si l'objectif est atteint, le gain couvre deux pertes du même montant.</div>
     </div>
+  </div>
+</section>
+
+<section class="backtest-cta">
+  <div class="wrap">
+    <h2>📈 Ne nous crois pas sur parole — vérifie toi-même</h2>
+    <p>Plutôt que des promesses, on te montre comment la stratégie du générateur de niveaux se serait réellement comportée sur des données de marché passées. Lance le backtest, gratuitement.</p>
+    <a class="btn-primary" href="backtest.html">Voir le backtest en direct</a>
   </div>
 </section>
 
