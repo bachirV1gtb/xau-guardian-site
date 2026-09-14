@@ -36,6 +36,18 @@
   .empty{margin-top:24px;border:1px dashed var(--line);border-radius:8px;padding:40px 32px;text-align:center;color:var(--muted);}
   .empty h2{font-size:1.2rem;color:var(--text);margin-bottom:8px;}
 
+  .signals{margin-top:24px;display:flex;flex-direction:column;gap:10px;}
+  .signal-card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;}
+  .signal-top{display:flex;justify-content:space-between;align-items:center;}
+  .signal-top .pair{font-weight:600;font-family:'JetBrains Mono',monospace;}
+  .signal-status{font-size:0.76rem;padding:3px 10px;border-radius:14px;font-weight:600;}
+  .signal-status.open{background:rgba(139,124,246,0.14);color:var(--violet-bright);}
+  .signal-status.win{background:rgba(52,211,153,0.14);color:var(--green);}
+  .signal-status.loss{background:rgba(248,113,113,0.14);color:#F87171;}
+  .signal-levels{display:flex;gap:18px;margin-top:10px;font-size:0.86rem;color:var(--muted);flex-wrap:wrap;}
+  .signal-levels span strong{color:var(--text);font-family:'JetBrains Mono',monospace;}
+  .signal-time{margin-top:6px;font-size:0.76rem;color:var(--muted);}
+
   .section-title{margin-top:48px;font-size:1.1rem;font-weight:600;}
   .tools{margin-top:20px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
   @media (max-width:760px){ .tools{grid-template-columns:1fr 1fr;} }
@@ -72,10 +84,14 @@
   <div class="wrap">
     <p class="hello">Connecté en tant que <strong id="user-email">…</strong></p>
 
-    <div class="empty">
+    <div id="signals-loading" class="empty">
+      <h2>🔔 Chargement des signaux…</h2>
+    </div>
+    <div id="signals-empty" class="empty" style="display:none;">
       <h2>🔔 Aucune alerte pour l'instant</h2>
       <p>Vos signaux XAUUSD apparaîtront ici dès qu'ils seront publiés sur le canal.</p>
     </div>
+    <div id="signals-list" class="signals"></div>
 
     <div class="section-title">Outils</div>
     <div class="tools">
@@ -141,10 +157,57 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
   import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+  import { getFirestore, collection, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
   import { firebaseConfig } from "./firebase-config.js";
 
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  function statusInfo(signal){
+    if (signal.status === 'tp1_hit' || signal.status === 'tp2_hit') return { label: signal.status === 'tp2_hit' ? 'Objectif 2 atteint' : 'Objectif 1 atteint', cls: 'win' };
+    if (signal.status === 'sl_hit') return { label: 'Stop touché', cls: 'loss' };
+    if (signal.status === 'closed_flip') return { label: 'Clôturé', cls: signal.result_pips >= 0 ? 'win' : 'loss' };
+    return { label: 'En cours', cls: 'open' };
+  }
+
+  async function loadSignals(){
+    const loadingEl = document.getElementById('signals-loading');
+    const emptyEl = document.getElementById('signals-empty');
+    const listEl = document.getElementById('signals-list');
+    try {
+      const q = query(collection(db, 'signals'), orderBy('created_at', 'desc'), limit(10));
+      const snap = await getDocs(q);
+      loadingEl.style.display = 'none';
+      if (snap.empty) {
+        emptyEl.style.display = 'block';
+        return;
+      }
+      snap.forEach(docSnap => {
+        const s = docSnap.data();
+        const status = statusInfo(s);
+        const actionLabel = s.action === 'BUY' ? "J'ACHÈTE" : 'JE VENDS';
+        const card = document.createElement('div');
+        card.className = 'signal-card';
+        card.innerHTML = `
+          <div class="signal-top">
+            <span class="pair">${s.symbol} · ${actionLabel}</span>
+            <span class="signal-status ${status.cls}">${status.label}</span>
+          </div>
+          <div class="signal-levels">
+            <span>Entrée <strong>${s.entry}</strong></span>
+            <span>Stop <strong>${s.sl}</strong></span>
+            <span>Objectif 1 <strong>${s.tp1}</strong></span>
+            <span>Objectif 2 <strong>${s.tp2}</strong></span>
+          </div>
+          <div class="signal-time">${new Date(s.created_at).toLocaleString()}</div>
+        `;
+        listEl.appendChild(card);
+      });
+    } catch (e) {
+      loadingEl.innerHTML = '<h2>🔔 Impossible de charger les signaux pour le moment</h2>';
+    }
+  }
 
   onAuthStateChanged(auth, (user) => {
     if (!user) {
@@ -158,6 +221,7 @@
       let hash = 0;
       for (let i = 0; i < email.length; i++) hash = email.charCodeAt(i) + ((hash << 5) - hash);
       avatar.style.background = palette[Math.abs(hash) % palette.length];
+      loadSignals();
     }
   });
 
