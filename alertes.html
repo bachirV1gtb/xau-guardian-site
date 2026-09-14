@@ -116,6 +116,13 @@
         <span id="status-text">Surveillance inactive</span>
       </div>
 
+      <div class="notice" id="notif-permission-box">
+        <strong>Notifications désactivées.</strong> Clique pour autoriser ton navigateur à t'avertir.
+        <div style="margin-top:10px;">
+          <button type="button" id="enable-notif-btn" style="background:var(--violet);color:#0E1120;border:none;padding:9px 16px;border-radius:6px;font-weight:600;font-size:0.85rem;cursor:pointer;font-family:inherit;">Activer les notifications</button>
+        </div>
+      </div>
+
       <div class="panel">
         <div class="field-row">
           <div>
@@ -176,15 +183,36 @@
       if (memberDoc.exists()) {
         document.getElementById('content').classList.add('show');
         await loadAlerts();
-        if ('Notification' in window && Notification.permission === 'default') {
-          Notification.requestPermission();
-        }
+        updateNotifPermissionBox();
         startPolling();
       } else {
         document.getElementById('locked').style.display = 'block';
       }
     } catch (e) {
       document.getElementById('locked').style.display = 'block';
+    }
+  });
+
+  function updateNotifPermissionBox(){
+    const box = document.getElementById('notif-permission-box');
+    if (!('Notification' in window)) {
+      box.innerHTML = '<strong>Notifications non supportées</strong> par ce navigateur.';
+      return;
+    }
+    if (Notification.permission === 'granted') {
+      box.style.display = 'none';
+    } else if (Notification.permission === 'denied') {
+      box.innerHTML = '<strong>Notifications bloquées.</strong> Autorise-les dans les réglages de ton navigateur pour ce site (icône cadenas dans la barre d\'adresse), puis recharge la page.';
+    } else {
+      box.style.display = 'block';
+    }
+  }
+
+  document.getElementById('enable-notif-btn').addEventListener('click', async () => {
+    const result = await Notification.requestPermission();
+    updateNotifPermissionBox();
+    if (result === 'granted') {
+      new Notification('XAU Guardian', { body: 'Les notifications sont activées.' });
     }
   });
 
