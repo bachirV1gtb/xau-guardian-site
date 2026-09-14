@@ -82,6 +82,27 @@ Après chaque paiement reçu sur Stripe (visible dans ton tableau de bord Stripe
 
 La personne aura alors immédiatement accès à `formation.html` la prochaine fois qu'elle rechargera la page. Cette étape reste manuelle pour l'instant ; si le nombre de membres grandit, on pourra automatiser ça avec un webhook Stripe relié à Firebase.
 
+## Analyse avancée (analyse-avancee.html)
+
+Nouvel outil réservé aux Membres, qui combine 4 lectures indépendantes du marché au lieu d'une seule :
+- **Tendance** — comparaison de deux moyennes mobiles exponentielles (EMA 20 et EMA 50).
+- **Momentum** — RSI (14 périodes).
+- **Élan** — MACD (12, 26, 9).
+- **Structure de prix** — la même logique de rupture de canal que le générateur de niveaux gratuit.
+
+L'outil compte combien de ces 4 lectures pointent dans la même direction ("confluence"), et ne propose une entrée/stop/objectifs que si au moins 3 des 4 sont alignées — sinon il indique honnêtement que les signaux sont mitigés plutôt que d'inventer un niveau. Il utilise la même clé API TwelveData que les autres outils et la même vérification d'accès Membre (Firestore) que la formation.
+
+## Page "Mon compte" (mon-compte.html)
+
+Nouvelle page où chaque personne connectée voit son e-mail, son statut d'abonnement, et peut demander un lien pour changer son mot de passe (envoyé par e-mail, sans que tu aies à intervenir).
+
+Pour afficher une date de renouvellement sur cette page, ajoute un champ optionnel quand tu ajoutes un Membre dans Firestore :
+- **Field** : `renouvellement`
+- **Type** : `string`
+- **Value** : la date au format que tu préfères, par exemple `12 décembre 2026`
+
+Si tu ne renseignes pas ce champ, la page affiche simplement "⭐ Membre" sans date — ça reste fonctionnel sans cette étape.
+
 ## Pour aller plus loin
 
 Le site a maintenant 11 fichiers : `index.html`, `auth.html`, `dashboard.html`, `outil-signal.html`, `analyse-marche.html`, `calculateur.html`, `sessions.html`, `tarifs.html`, `faq.html`, `assistant.html`, plus les 2 fichiers de configuration (`firebase-config.js`, `twelvedata-config.js`). Tout le site utilise le même thème sombre bleu-violet, avec le lien vers ton canal Telegram visible partout.
