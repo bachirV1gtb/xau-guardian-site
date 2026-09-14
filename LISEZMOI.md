@@ -133,7 +133,7 @@ service cloud.firestore {
 
 ## Simulateur de trading virtuel (simulateur.html)
 
-Nouvel outil réservé aux Membres : capital virtuel de 10 000€, les membres "suivent" les vrais signaux publiés par le bot, et leur performance se calcule automatiquement dès que le bot résout un signal (objectif atteint ou stop touché) — aucune action manuelle nécessaire, tout repose sur la connexion Firestore déjà en place.
+Outil accessible à **tous les comptes** (pas réservé aux Membres) : capital virtuel de 10 000€, chaque personne peut "ajouter à son compte démo" un signal ouvert publié par le bot, et sa performance se calcule automatiquement dès que le bot résout ce signal (objectif atteint ou stop touché) — aucune action manuelle nécessaire. Volontairement gratuit : c'est un bon moyen de faire tester la stratégie sans risque, ce qui peut donner envie de passer Membre pour le reste (formation, analyse avancée, alertes de prix).
 
 ### Mettre à jour les règles Firestore (obligatoire)
 
