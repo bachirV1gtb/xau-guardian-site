@@ -151,14 +151,22 @@
 
     try {
       const memberDoc = await getDoc(doc(db, 'members', user.email));
-      if (memberDoc.exists()) {
-        document.getElementById('content').classList.add('show');
-        await refreshEverything();
-      } else {
+      if (!memberDoc.exists()) {
         document.getElementById('locked').style.display = 'block';
+        return;
       }
     } catch (e) {
+      console.error('Erreur de vérification du statut Membre :', e);
       document.getElementById('locked').style.display = 'block';
+      return;
+    }
+
+    document.getElementById('content').classList.add('show');
+    try {
+      await refreshEverything();
+    } catch (e) {
+      console.error('Erreur de chargement des données du simulateur :', e);
+      document.getElementById('open-signals-list').innerHTML = '<div class="empty-state">Impossible de charger les données pour le moment.</div>';
     }
   });
 
