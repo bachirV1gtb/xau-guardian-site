@@ -103,6 +103,34 @@ Pour afficher une date de renouvellement sur cette page, ajoute un champ optionn
 
 Si tu ne renseignes pas ce champ, la page affiche simplement "⭐ Membre" sans date — ça reste fonctionnel sans cette étape.
 
+## Alertes de prix personnalisées (alertes.html)
+
+Nouvel outil réservé aux Membres. Chaque personne peut définir un prix cible sur un instrument ; tant que la page reste ouverte dans son navigateur, le site vérifie le prix toutes les minutes et déclenche une notification navigateur si la condition est atteinte. **Ce n'est pas une notification push envoyée sur le téléphone quand le site est fermé** — c'est une limitation assumée d'un site sans serveur, à rappeler à tes membres.
+
+### Mettre à jour les règles Firestore (obligatoire)
+
+Cette fonctionnalité a besoin d'une nouvelle collection `alerts`, avec des règles différentes de `members` (chaque personne doit pouvoir créer/lire/supprimer ses propres alertes, mais pas celles des autres). Remplace tes règles Firestore actuelles par :
+
+```
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /members/{email} {
+      allow read: if request.auth != null;
+      allow write: if false;
+    }
+    match /alerts/{alertId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null && request.resource.data.email == request.auth.token.email;
+      allow update: if request.auth != null && resource.data.email == request.auth.token.email;
+      allow delete: if request.auth != null && resource.data.email == request.auth.token.email;
+    }
+  }
+}
+```
+
+(Va dans Firestore Database > onglet Rules, remplace tout, Publish.)
+
 ## Pour aller plus loin
 
 Le site a maintenant 11 fichiers : `index.html`, `auth.html`, `dashboard.html`, `outil-signal.html`, `analyse-marche.html`, `calculateur.html`, `sessions.html`, `tarifs.html`, `faq.html`, `assistant.html`, plus les 2 fichiers de configuration (`firebase-config.js`, `twelvedata-config.js`). Tout le site utilise le même thème sombre bleu-violet, avec le lien vers ton canal Telegram visible partout.
