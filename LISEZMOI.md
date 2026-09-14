@@ -131,6 +131,43 @@ service cloud.firestore {
 
 (Va dans Firestore Database > onglet Rules, remplace tout, Publish.)
 
+## Simulateur de trading virtuel (simulateur.html)
+
+Nouvel outil réservé aux Membres : capital virtuel de 10 000€, les membres "suivent" les vrais signaux publiés par le bot, et leur performance se calcule automatiquement dès que le bot résout un signal (objectif atteint ou stop touché) — aucune action manuelle nécessaire, tout repose sur la connexion Firestore déjà en place.
+
+### Mettre à jour les règles Firestore (obligatoire)
+
+Ajoute une nouvelle collection `paper_trades` à tes règles. Remplace tes règles actuelles par :
+
+```
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /members/{email} {
+      allow read: if request.auth != null;
+      allow write: if false;
+    }
+    match /alerts/{alertId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null && request.resource.data.email == request.auth.token.email;
+      allow update: if request.auth != null && resource.data.email == request.auth.token.email;
+      allow delete: if request.auth != null && resource.data.email == request.auth.token.email;
+    }
+    match /signals/{signalId} {
+      allow read: if request.auth != null;
+      allow write: if false;
+    }
+    match /paper_trades/{tradeId} {
+      allow read: if request.auth != null && resource.data.email == request.auth.token.email;
+      allow create: if request.auth != null && request.resource.data.email == request.auth.token.email;
+      allow update, delete: if false;
+    }
+  }
+}
+```
+
+(Firestore Database > onglet Rules > remplace tout > Publish.)
+
 ## Pour aller plus loin
 
 Le site a maintenant 11 fichiers : `index.html`, `auth.html`, `dashboard.html`, `outil-signal.html`, `analyse-marche.html`, `calculateur.html`, `sessions.html`, `tarifs.html`, `faq.html`, `assistant.html`, plus les 2 fichiers de configuration (`firebase-config.js`, `twelvedata-config.js`). Tout le site utilise le même thème sombre bleu-violet, avec le lien vers ton canal Telegram visible partout.
