@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%230B0F1F'/%3E%3Cpath d='M12 3 19 6.5V12c0 4.5-3 7.8-7 9-4-1.2-7-4.5-7-9V6.5L12 3Z' fill='%238B7CF6'/%3E%3C/svg%3E">
+<title>Simulateur "et si j'avais suivi ?" — XAU Guardian</title>
+<meta name="description" content="Simule ce que les alertes XAU Guardian auraient donné sur une période passée, à partir des vrais signaux envoyés.">
+<link rel="canonical" href="https://bachirv1gtb.github.io/xau-guardian-site/et-si-javais-suivi.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0B0F1F; --panel:#131A2E; --panel-2:#1A2340; --line:#262F4D;
+    --violet:#8B7CF6; --violet-bright:#A99BFF;
+    --text:#E7E9F5; --muted:#8890AA; --green:#34D399; --red:#F87171; --gold:#c6a34e;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+  h1,h2,h3{font-weight:600;margin:0;letter-spacing:-0.01em;}
+  a{color:inherit;}
+  .wrap{max-width:920px;margin:0 auto;padding:0 28px;}
+
+  nav{position:sticky;top:0;z-index:20;background:rgba(11,15,31,0.88);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);}
+  nav .wrap{display:flex;align-items:center;justify-content:space-between;height:68px;max-width:1120px;}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:1.1rem;text-decoration:none;color:var(--text);}
+  .navlinks{display:flex;gap:26px;font-size:0.92rem;color:var(--muted);}
+  .navlinks a:hover{color:var(--violet-bright);}
+  .nav-cta{display:inline-flex;align-items:center;gap:8px;background:var(--violet);color:#0E1120;padding:9px 18px;border-radius:6px;font-size:0.9rem;font-weight:600;text-decoration:none;}
+
+  .hero{padding:56px 0 32px;border-bottom:1px solid var(--line);}
+  .eyebrow{color:var(--violet-bright);font-size:0.9rem;margin-bottom:14px;}
+  .hero h1{font-size:clamp(1.7rem,3.4vw,2.3rem);line-height:1.2;}
+  .hero p.lead{margin-top:16px;color:var(--muted);max-width:64ch;}
+
+  .form-card{margin:40px 0;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:28px;}
+  .form-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;margin-bottom:20px;}
+  @media (max-width:700px){ .form-row{grid-template-columns:1fr;} }
+  .field label{display:block;font-size:0.85rem;color:var(--muted);margin-bottom:8px;}
+  .field input, .field select{width:100%;background:var(--panel-2);border:1px solid var(--line);border-radius:8px;color:var(--text);padding:11px 12px;font-size:0.98rem;font-family:inherit;}
+  .field input:focus, .field select:focus{outline:none;border-color:var(--violet);}
+  .btn-primary{background:var(--violet);color:#0E1120;padding:13px 26px;border-radius:8px;font-weight:600;font-size:0.98rem;border:none;cursor:pointer;}
+  .btn-primary:hover{background:var(--violet-bright);}
+  .btn-primary:disabled{opacity:0.6;cursor:not-allowed;}
+
+  .result-grid{margin-top:32px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  @media (max-width:700px){ .result-grid{grid-template-columns:1fr;} }
+  .result-card{background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:20px;}
+  .result-card .k{color:var(--muted);font-size:0.8rem;text-transform:uppercase;}
+  .result-card .v{margin-top:8px;font-size:1.7rem;font-weight:600;}
+  .result-card .v.green{color:var(--green);}
+  .result-card .v.red{color:var(--red);}
+
+  .assumptions{margin-top:24px;background:var(--panel-2);border-radius:10px;padding:18px 20px;font-size:0.86rem;color:var(--muted);}
+  .assumptions strong{color:var(--text);}
+
+  .disclaimer{padding:36px 0;border-top:1px solid var(--line);color:var(--muted);font-size:0.85rem;margin-top:20px;}
+  .status-msg{margin-top:18px;color:var(--muted);font-size:0.9rem;}
+
+  footer{border-top:1px solid var(--line);padding:36px 0;color:var(--muted);font-size:0.85rem;}
+  footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;max-width:1120px;}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="brand" href="index.html">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <path d="M12 2 20 6v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-4Z" stroke="#8B7CF6" stroke-width="1.4"/>
+        <circle cx="12" cy="11" r="3" stroke="#A99BFF" stroke-width="1.2"/>
+      </svg>
+      XAU Guardian
+    </a>
+    <div class="navlinks">
+      <a href="index.html">Accueil</a>
+      <a href="stats.html">Résultats</a>
+      <a href="et-si-javais-suivi.html">Simulateur</a>
+      <a href="tarifs.html">Tarifs</a>
+    </div>
+    <a class="nav-cta" href="https://t.me/+-aD8_q-5Qf9lNTU0" target="_blank" rel="noopener">📢 Rejoindre Telegram</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Basé sur les vrais signaux envoyés</div>
+    <h1>Et si tu avais suivi nos alertes ?</h1>
+    <p class="lead">Ce simulateur calcule, à partir de l'historique réel des signaux XAU Guardian, ce qu'un montant de départ aurait donné sur une période passée. C'est un exercice rétrospectif, pas une promesse : les performances passées ne préjugent jamais des performances futures.</p>
+  </div>
+</section>
+
+<section class="wrap">
+  <div class="form-card">
+    <div class="form-row">
+      <div class="field">
+        <label for="capital">Capital de départ (€)</label>
+        <input type="number" id="capital" value="500" min="10" step="10">
+      </div>
+      <div class="field">
+        <label for="risk">Risque par position (%)</label>
+        <input type="number" id="risk" value="1" min="0.1" max="10" step="0.1">
+      </div>
+      <div class="field">
+        <label for="period">Période</label>
+        <select id="period">
+          <option value="7">7 derniers jours</option>
+          <option value="30" selected>30 derniers jours</option>
+          <option value="90">90 derniers jours</option>
+          <option value="0">Depuis le lancement</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn-primary" id="calc-btn">Calculer</button>
+    <div class="status-msg" id="status-msg"></div>
+
+    <div class="result-grid" id="result-grid" style="display:none;">
+      <div class="result-card">
+        <div class="k">Positions incluses</div>
+        <div class="v" id="res-count">—</div>
+      </div>
+      <div class="result-card">
+        <div class="k">Résultat simulé</div>
+        <div class="v" id="res-gain">—</div>
+      </div>
+      <div class="result-card">
+        <div class="k">Capital final estimé</div>
+        <div class="v" id="res-final">—</div>
+      </div>
+    </div>
+
+    <div class="assumptions" id="assumptions" style="display:none;">
+      <strong>Comment ce calcul est fait :</strong> pour chaque position clôturée, on suppose que tu risques exactement
+      <span id="assum-risk">1%</span> de ton capital de départ sur la distance jusqu'au stop loss de cette position.
+      Le résultat de chaque position (en pips) est ensuite converti en euros selon cette mise en risque — une position qui
+      atteint plus de paliers avant de se clôturer rapporte proportionnellement plus. <strong>Ce calcul ne tient pas
+      compte du spread, des commissions, du slippage, ni de l'effet cumulé (intérêts composés) d'un capital qui grandit
+      ou diminue au fil du temps</strong> — le résultat réel aurait été différent.
+    </div>
+  </div>
+</section>
+
+<section class="disclaimer">
+  <div class="wrap">
+    Ce simulateur est un outil pédagogique basé sur des données historiques réelles, à titre indicatif uniquement. Il ne constitue pas un conseil en investissement personnalisé et ne garantit en rien les résultats futurs. Le trading comporte un risque de perte en capital, pouvant excéder le montant investi selon l'effet de levier utilisé.
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>XAU Guardian</span>
+    <span>
+      <a href="https://t.me/+-aD8_q-5Qf9lNTU0" target="_blank" rel="noopener" style="color:var(--muted);text-decoration:none;">📢 Telegram</a>
+      &nbsp;·&nbsp; Signaux XAUUSD · Générateur de niveaux · Assistant IA
+    </span>
+  </div>
+</footer>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+  import { getFirestore, collection, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+  import { firebaseConfig } from "./firebase-config.js";
+
+  const PIP_SIZE = 0.1;
+
+  function pipsBetween(a, b) {
+    return Math.round(Math.abs(a - b) / PIP_SIZE);
+  }
+
+  function classifySignal(doc) {
+    const levels = Array.isArray(doc.levels) ? doc.levels : [];
+    const levelsHit = Array.isArray(doc.levels_hit) ? doc.levels_hit : [];
+    const entry = doc.entry;
+    const status = doc.status || "";
+    const closed = !!doc.closed;
+
+    let pips = 0;
+    let anyLevelHit = false;
+    levelsHit.forEach((hit, i) => {
+      if (hit && levels[i] !== undefined) {
+        pips += pipsBetween(entry, levels[i]);
+        anyLevelHit = true;
+      }
+    });
+
+    const hitSL = status.includes("sl_hit");
+    if (hitSL && typeof doc.result_pips === "number") {
+      pips += doc.result_pips;
+    } else if (status === "closed_flip" && typeof doc.result_pips === "number") {
+      pips += doc.result_pips;
+    }
+
+    return { pips, closed, hitSL, anyLevelHit };
+  }
+
+  let allSignals = null;
+
+  async function loadSignalsOnce() {
+    if (allSignals !== null) return allSignals;
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const q = query(collection(db, "signals"), orderBy("created_at", "desc"), limit(1000));
+    const snap = await getDocs(q);
+    const signals = [];
+    snap.forEach((docSnap) => signals.push({ id: docSnap.id, ...docSnap.data() }));
+    allSignals = signals;
+    return signals;
+  }
+
+  function withinPeriod(signal, days) {
+    if (!days || days <= 0) return true;
+    if (!signal.created_at) return false;
+    const created = new Date(signal.created_at);
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - days);
+    return created >= cutoff;
+  }
+
+  async function runSimulation() {
+    const btn = document.getElementById("calc-btn");
+    const statusMsg = document.getElementById("status-msg");
+    const resultGrid = document.getElementById("result-grid");
+    const assumptions = document.getElementById("assumptions");
+
+    const capital = parseFloat(document.getElementById("capital").value);
+    const riskPct = parseFloat(document.getElementById("risk").value);
+    const periodDays = parseInt(document.getElementById("period").value, 10);
+
+    if (!capital || capital <= 0 || !riskPct || riskPct <= 0) {
+      statusMsg.textContent = "Merci d'entrer un capital et un risque par position valides.";
+      return;
+    }
+
+    btn.disabled = true;
+    statusMsg.textContent = "Chargement des signaux…";
+    resultGrid.style.display = "none";
+    assumptions.style.display = "none";
+
+    try {
+      const signals = await loadSignalsOnce();
+      const inPeriod = signals.filter((s) => withinPeriod(s, periodDays));
+      const closed = inPeriod
+        .map((s) => ({ ...s, ...classifySignal(s) }))
+        .filter((s) => s.closed && s.entry !== undefined && s.sl !== undefined);
+
+      if (closed.length === 0) {
+        statusMsg.textContent = "Aucune position clôturée sur cette période pour l'instant.";
+        btn.disabled = false;
+        return;
+      }
+
+      const riskAmount = capital * (riskPct / 100);
+      let totalGain = 0;
+      let skipped = 0;
+
+      closed.forEach((s) => {
+        const stopPips = pipsBetween(s.entry, s.sl);
+        if (!stopPips || stopPips <= 0) {
+          skipped++;
+          return;
+        }
+        const gainForTrade = s.pips * (riskAmount / stopPips);
+        totalGain += gainForTrade;
+      });
+
+      const finalCapital = capital + totalGain;
+
+      document.getElementById("res-count").textContent = `${closed.length - skipped}`;
+      const gainEl = document.getElementById("res-gain");
+      gainEl.textContent = `${totalGain >= 0 ? "+" : ""}${totalGain.toFixed(2)} €`;
+      gainEl.className = "v " + (totalGain >= 0 ? "green" : "red");
+
+      const finalEl = document.getElementById("res-final");
+      finalEl.textContent = `${finalCapital.toFixed(2)} €`;
+      finalEl.className = "v " + (finalCapital >= capital ? "green" : "red");
+
+      document.getElementById("assum-risk").textContent = `${riskPct}%`;
+
+      resultGrid.style.display = "grid";
+      assumptions.style.display = "block";
+      statusMsg.textContent = "";
+    } catch (err) {
+      console.error("Erreur simulation :", err);
+      statusMsg.textContent = "Impossible de charger les données pour le moment.";
+    }
+    btn.disabled = false;
+  }
+
+  document.getElementById("calc-btn").addEventListener("click", runSimulation);
+</script>
+
+</body>
+</html>
