@@ -228,14 +228,14 @@
       </div>
     </div>
     <div class="alert-card hero-fade d3">
-      <div class="top"><div class="pair mono">XAU/USD</div><div class="dir"><span class="live-dot"></span>ACHAT</div></div>
-      <div class="ts">Signal envoyé à 15:32 · session New York</div>
+      <div class="top"><div class="pair mono">XAU/USD</div><div class="dir" id="hero-dir"><span class="live-dot"></span>ACHAT</div></div>
+      <div class="ts" id="hero-ts">Exemple d'alerte</div>
       <div class="alert-grid">
-        <div><div class="k">Entrée</div><div class="v mono">2 641.80</div></div>
-        <div><div class="k">Stop</div><div class="v mono">2 636.20</div></div>
-        <div><div class="k">Objectif</div><div class="v mono">2 652.90</div></div>
+        <div><div class="k">Entrée</div><div class="v mono" id="hero-entry">4 329</div></div>
+        <div><div class="k">SL</div><div class="v mono" id="hero-sl">4 305</div></div>
+        <div><div class="k">Paliers</div><div class="v mono" id="hero-levels">0/6</div></div>
       </div>
-      <div class="foot">Ratio risque/récompense 1:2 · calculé à partir de données réelles</div>
+      <div class="foot" id="hero-foot">Sortie en échelle (P1 à P6) · calculé à partir de données réelles</div>
     </div>
   </div>
 </section>
@@ -412,6 +412,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+  import { getFirestore, collection, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
   import { firebaseConfig } from "./firebase-config.js";
 
   function isConfigured(cfg){ return cfg && cfg.apiKey && !cfg.apiKey.startsWith('REPLACE_'); }
@@ -461,6 +462,59 @@
         heroCta.href = 'dashboard.html';
       }
     });
+
+    loadLatestSignalIntoHero(app);
+  }
+
+  function relativeTimeFr(isoString) {
+    const then = new Date(isoString);
+    const diffMs = Date.now() - then.getTime();
+    const diffMin = Math.round(diffMs / 60000);
+    if (diffMin < 1) return "à l'instant";
+    if (diffMin < 60) return `il y a ${diffMin} min`;
+    const diffH = Math.round(diffMin / 60);
+    if (diffH < 24) return `il y a ${diffH} h`;
+    const diffD = Math.round(diffH / 24);
+    return `il y a ${diffD} j`;
+  }
+
+  async function loadLatestSignalIntoHero(app) {
+    try {
+      const db = getFirestore(app);
+      const q = query(collection(db, "signals"), orderBy("created_at", "desc"), limit(1));
+      const snap = await getDocs(q);
+      if (snap.empty) return;
+
+      const doc = snap.docs[0].data();
+      const action = doc.action === "SELL" ? "VENTE" : "ACHAT";
+      const levelsHit = Array.isArray(doc.levels_hit) ? doc.levels_hit.filter(Boolean).length : 0;
+      const levelsTotal = Array.isArray(doc.levels) ? doc.levels.length : 6;
+      const status = doc.status || "";
+      const closed = !!doc.closed;
+
+      document.getElementById('hero-dir').innerHTML =
+        `<span class="live-dot"></span>${action}`;
+      document.getElementById('hero-ts').textContent =
+        doc.created_at ? `Dernier signal · ${relativeTimeFr(doc.created_at)}` : "Dernier signal";
+      document.getElementById('hero-entry').textContent =
+        typeof doc.entry === 'number' ? doc.entry.toFixed(0) : '—';
+      document.getElementById('hero-sl').textContent =
+        typeof doc.sl === 'number' ? doc.sl.toFixed(0) : '—';
+
+      let levelsLabel = `${levelsHit}/${levelsTotal}`;
+      if (closed && status.includes('sl_hit') && levelsHit === 0) {
+        levelsLabel = 'SL touché';
+      } else if (closed && levelsHit === levelsTotal) {
+        levelsLabel = 'Tous atteints';
+      }
+      document.getElementById('hero-levels').textContent = levelsLabel;
+
+      document.getElementById('hero-foot').textContent =
+        closed ? "Position clôturée · basé sur un vrai signal" : "Position en cours · basé sur un vrai signal";
+    } catch (err) {
+      console.error("Erreur de chargement du dernier signal :", err);
+      // En cas d'échec, la carte garde son exemple par défaut — pas grave.
+    }
   }
 </script>
 
