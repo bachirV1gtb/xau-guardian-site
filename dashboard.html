@@ -174,10 +174,28 @@
   const auth = getAuth(app);
   const db = getFirestore(app);
 
+  function round2(n){ return Math.round(n * 100) / 100; }
+
+  function countLevelHits(signal){
+    if (!signal.levels_hit) return 0;
+    return Object.values(signal.levels_hit).filter(v => v === true).length;
+  }
+
+  function lastHitLevelPrice(signal){
+    if (!signal.levels_hit || !signal.levels) return null;
+    let lastIndex = -1;
+    Object.entries(signal.levels_hit).forEach(([idx, hit]) => {
+      if (hit && Number(idx) > lastIndex) lastIndex = Number(idx);
+    });
+    return lastIndex >= 0 ? signal.levels[lastIndex] : null;
+  }
+
   function statusInfo(signal){
-    if (signal.status === 'tp1_hit' || signal.status === 'tp2_hit') return { label: signal.status === 'tp2_hit' ? 'Objectif 2 atteint' : 'Objectif 1 atteint', cls: 'win' };
     if (signal.status === 'sl_hit') return { label: 'Stop touché', cls: 'loss' };
-    if (signal.status === 'closed_flip') return { label: 'Clôturé', cls: signal.result_pips >= 0 ? 'win' : 'loss' };
+    if (signal.status === 'closed_flip') return { label: 'Clôturé', cls: (signal.result_pips || 0) >= 0 ? 'win' : 'loss' };
+    const hits = countLevelHits(signal);
+    const total = signal.levels ? signal.levels.length : 6;
+    if (hits > 0) return { label: `Palier ${hits}/${total} atteint`, cls: 'open' };
     return { label: 'En cours', cls: 'open' };
   }
 
@@ -197,6 +215,9 @@
         const s = docSnap.data();
         const status = statusInfo(s);
         const actionLabel = s.action === 'BUY' ? "J'ACHÈTE" : 'JE VENDS';
+        const hits = countLevelHits(s);
+        const total = s.levels ? s.levels.length : 6;
+        const lastPrice = lastHitLevelPrice(s);
         const card = document.createElement('div');
         card.className = 'signal-card';
         card.innerHTML = `
@@ -205,10 +226,11 @@
             <span class="signal-status ${status.cls}">${status.label}</span>
           </div>
           <div class="signal-levels">
-            <span>Entrée <strong>${s.entry}</strong></span>
-            <span>Stop <strong>${s.sl}</strong></span>
-            <span>Objectif 1 <strong>${s.tp1}</strong></span>
-            <span>Objectif 2 <strong>${s.tp2}</strong></span>
+            <span>Entrée <strong>${round2(s.entry)}</strong></span>
+            <span>Stop <strong>${round2(s.sl)}</strong></span>
+            <span>Paliers <strong>${hits}/${total}</strong></span>
+            ${lastPrice !== null ? `<span>Dernier atteint <strong>${round2(lastPrice)}</strong></span>` : ''}
+            ${s.closed && s.result_pips !== null && s.result_pips !== undefined ? `<span>Résultat <strong>${s.result_pips >= 0 ? '+' : ''}${s.result_pips} pips</strong></span>` : ''}
           </div>
           <div class="signal-time">${new Date(s.created_at).toLocaleString()}</div>
         `;
