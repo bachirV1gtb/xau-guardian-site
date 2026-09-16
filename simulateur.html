@@ -150,9 +150,27 @@
     }
   });
 
+  function round2(n){ return Math.round(n * 100) / 100; }
+
+  function countLevelHits(signal){
+    if (!signal.levels_hit) return 0;
+    return Object.values(signal.levels_hit).filter(v => v === true).length;
+  }
+
+  function lastHitLevelPrice(signal){
+    if (!signal.levels_hit || !signal.levels) return null;
+    let lastIndex = -1;
+    Object.entries(signal.levels_hit).forEach(([idx, hit]) => {
+      if (hit && Number(idx) > lastIndex) lastIndex = Number(idx);
+    });
+    return lastIndex >= 0 ? signal.levels[lastIndex] : null;
+  }
+
   function statusInfo(signal){
     if (!signal.closed) {
-      if (signal.tp1_hit || signal.tp2_hit) return { label: signal.tp2_hit ? 'Objectif 2 (en cours)' : 'Objectif 1 (en cours)', cls: 'open' };
+      const hits = countLevelHits(signal);
+      const total = signal.levels ? signal.levels.length : 6;
+      if (hits > 0) return { label: `Palier ${hits}/${total} (en cours)`, cls: 'open' };
       return { label: 'En cours', cls: 'open' };
     }
     if (signal.status === 'sl_hit') return { label: 'Stop touché', cls: 'loss' };
@@ -248,6 +266,8 @@
     openSignals.forEach(s => {
       const actionLabel = s.action === 'BUY' ? "ACHAT" : "VENTE";
       const alreadyFollowed = followedSignalIds.has(s.id);
+      const hits = countLevelHits(s);
+      const total = s.levels ? s.levels.length : 6;
       const card = document.createElement('div');
       card.className = 'signal-card';
       card.innerHTML = `
@@ -258,10 +278,9 @@
             : `<button class="follow-btn" data-id="${s.id}">Ajouter à mon compte démo</button>`}
         </div>
         <div class="signal-levels">
-          <span>Entrée <strong>${s.entry}</strong></span>
-          <span>Stop <strong>${s.sl}</strong></span>
-          <span>Objectif 1 <strong>${s.tp1}</strong></span>
-          <span>Objectif 2 <strong>${s.tp2}</strong></span>
+          <span>Entrée <strong>${round2(s.entry)}</strong></span>
+          <span>Stop <strong>${round2(s.sl)}</strong></span>
+          <span>Paliers <strong>${hits}/${total}</strong></span>
         </div>
       `;
       container.appendChild(card);
@@ -299,10 +318,9 @@
           <span class="status-badge ${status.cls}">${status.label}</span>
         </div>
         <div class="signal-levels">
-          <span>Entrée <strong>${signal.entry}</strong></span>
-          <span>Stop <strong>${signal.sl}</strong></span>
-          <span>Objectif 1 <strong>${signal.tp1}</strong></span>
-          <span>Objectif 2 <strong>${signal.tp2}</strong></span>
+          <span>Entrée <strong>${round2(signal.entry)}</strong></span>
+          <span>Stop <strong>${round2(signal.sl)}</strong></span>
+          <span>Paliers <strong>${countLevelHits(signal)}/${signal.levels ? signal.levels.length : 6}</strong></span>
           ${signal.closed ? `<span>Résultat <strong>${(signal.result_pips || 0) >= 0 ? '+' : ''}${signal.result_pips || 0} pips</strong></span>` : ''}
         </div>
       `;
