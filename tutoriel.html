@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%230B0F1F'/%3E%3Cpath d='M12 3 19 6.5V12c0 4.5-3 7.8-7 9-4-1.2-7-4.5-7-9V6.5L12 3Z' fill='%238B7CF6'/%3E%3C/svg%3E">
 <title>Tutoriel — XAU Guardian</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,10 +18,10 @@
   body{margin:0;min-height:100vh;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;}
   .mono{font-family:'JetBrains Mono',monospace;}
   a{color:inherit;}
-  .wrap{max-width:720px;margin:0 auto;padding:0 24px;}
+  .wrap{max-width:760px;margin:0 auto;padding:0 24px;}
   nav{border-bottom:1px solid var(--line);}
-  nav .wrap{height:66px;display:flex;align-items:center;justify-content:space-between;}
-  .brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:1.02rem;}
+  nav .wrap{min-height:66px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;padding-top:10px;padding-bottom:10px;}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:1.02rem;flex:none;}
   .brand span{color:var(--muted);font-weight:400;font-size:0.85rem;}
   a.back{color:var(--muted);text-decoration:none;font-size:0.9rem;}
   a.back:hover{color:var(--violet-bright);}
@@ -29,51 +30,74 @@
   h1{font-size:1.4rem;margin:0 0 6px;font-weight:600;}
   .sub{color:var(--muted);font-size:0.9rem;margin:0 0 24px;}
 
-  .player{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden;}
-  .screen{position:relative;aspect-ratio:16/10;background:var(--panel-2);display:flex;align-items:center;justify-content:center;padding:24px;}
-  .frame{display:none;width:100%;height:100%;align-items:center;justify-content:center;}
-  .frame.active{display:flex;}
+  .player{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;}
 
-  .mock{width:100%;max-width:400px;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:18px;}
+  .segments{display:flex;gap:5px;padding:14px 16px 0;}
+  .segment{flex:1;height:4px;border-radius:2px;background:rgba(255,255,255,0.12);overflow:hidden;position:relative;cursor:pointer;}
+  .segment-fill{position:absolute;inset:0;background:var(--violet-bright);width:0%;}
+  .segment.done .segment-fill{width:100%;background:var(--violet);}
+  .segment.current .segment-fill{transition:width 0.1s linear;}
+
+  .screen{
+    position:relative;aspect-ratio:16/10;display:flex;align-items:center;justify-content:center;padding:32px;
+    background:radial-gradient(ellipse at 50% 35%, var(--glow, rgba(139,124,246,0.16)) 0%, transparent 60%), var(--panel-2);
+    transition:background 0.5s ease;
+    overflow:hidden;
+  }
+  .screen::before{
+    content:'';position:absolute;inset:0;opacity:0.5;pointer-events:none;
+    background-image:radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px);
+    background-size:22px 22px;
+  }
+  .frame{display:none;width:100%;height:100%;align-items:center;justify-content:center;position:relative;z-index:1;}
+  .frame.active{display:flex;animation:frameIn 0.5s ease;}
+  @keyframes frameIn{from{opacity:0;transform:translateY(10px) scale(0.98);}to{opacity:1;transform:translateY(0) scale(1);}}
+  @media (prefers-reduced-motion: reduce){ .frame.active{animation:none;} }
+
+  .step-chip{position:absolute;top:14px;left:16px;background:rgba(11,15,31,0.6);border:1px solid var(--line);color:var(--muted);font-size:0.72rem;padding:4px 10px;border-radius:20px;z-index:2;}
+
+  .mock{width:100%;max-width:380px;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:20px;box-shadow:0 20px 50px -20px rgba(0,0,0,0.6);}
   .mock-head{display:flex;align-items:center;gap:8px;margin-bottom:14px;}
   .dot{width:8px;height:8px;border-radius:50%;background:var(--muted);opacity:0.4;}
 
   .tg-bubble{background:var(--tg);color:#fff;padding:10px 14px;border-radius:10px;font-size:0.86rem;max-width:80%;margin-bottom:8px;}
-  .btn-mock{display:inline-block;background:var(--violet);color:#0E1120;padding:9px 18px;border-radius:6px;font-weight:600;font-size:0.85rem;margin-top:8px;}
+  .btn-mock{display:inline-block;background:var(--violet);color:#0E1120;padding:10px 20px;border-radius:6px;font-weight:600;font-size:0.85rem;margin-top:8px;}
 
-  .field-mock{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:9px 12px;font-size:0.85rem;color:var(--muted);margin-bottom:8px;}
+  .field-mock{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:10px 12px;font-size:0.85rem;color:var(--muted);margin-bottom:8px;}
 
   .grid-mock{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px;}
-  .tile-mock{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:12px;font-size:0.78rem;color:var(--muted);text-align:center;}
+  .tile-mock{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:14px;font-size:0.8rem;color:var(--muted);text-align:center;}
 
   .levels-mock{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:10px;border-top:1px solid var(--line);}
-  .levels-mock div{padding:10px 0;text-align:center;}
+  .levels-mock div{padding:12px 0;text-align:center;}
   .levels-mock .k{font-size:0.66rem;color:var(--muted);text-transform:uppercase;}
-  .levels-mock .v{margin-top:3px;font-size:0.92rem;font-weight:600;}
+  .levels-mock .v{margin-top:3px;font-size:0.98rem;font-weight:600;}
 
   .broker-mock{width:100%;}
   .buysell{display:flex;gap:8px;margin-top:10px;}
-  .buysell div{flex:1;text-align:center;padding:8px 0;border-radius:6px;font-size:0.8rem;font-weight:600;}
+  .buysell div{flex:1;text-align:center;padding:9px 0;border-radius:6px;font-size:0.8rem;font-weight:600;}
   .buysell .buy{background:rgba(52,211,153,0.14);color:var(--green);}
   .buysell .sell{background:rgba(248,113,113,0.14);color:var(--red);}
 
+  .big-emoji{font-size:2.6rem;line-height:1;}
+  .center-card{text-align:center;}
+  .center-card .title{margin-top:14px;font-weight:600;font-size:1.05rem;}
+  .center-card .note{margin-top:8px;color:var(--muted);font-size:0.86rem;}
+
   .pulse{animation:pulse 1.4s infinite;}
   @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(139,124,246,0.5);}50%{box-shadow:0 0 0 6px rgba(139,124,246,0);}}
+  @media (prefers-reduced-motion: reduce){ .pulse{animation:none;} }
 
-  .caption{padding:20px 24px;border-top:1px solid var(--line);}
-  .caption h3{margin:0 0 6px;font-size:1.02rem;}
-  .caption p{margin:0;color:var(--muted);font-size:0.9rem;}
+  .caption{padding:22px 24px 18px;}
+  .caption h3{margin:0 0 8px;font-size:1.1rem;}
+  .caption p{margin:0;color:var(--muted);font-size:0.92rem;line-height:1.55;}
 
-  .controls{display:flex;align-items:center;gap:14px;padding:16px 24px;border-top:1px solid var(--line);}
-  .ctrl-btn{background:var(--panel-2);border:1px solid var(--line);color:var(--text);width:38px;height:38px;border-radius:50%;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;font-family:inherit;}
+  .controls{display:flex;align-items:center;justify-content:center;gap:16px;padding:6px 24px 22px;}
+  .ctrl-btn{background:var(--panel-2);border:1px solid var(--line);color:var(--text);width:40px;height:40px;border-radius:50%;cursor:pointer;font-size:1.05rem;display:flex;align-items:center;justify-content:center;font-family:inherit;}
   .ctrl-btn:hover{border-color:var(--violet);}
-  .progress{flex:1;height:4px;background:var(--panel-2);border-radius:2px;overflow:hidden;}
-  .progress-bar{height:100%;background:var(--violet);width:0%;transition:width 0.3s linear;}
-  .step-count{font-size:0.8rem;color:var(--muted);white-space:nowrap;}
-
-  .dots{display:flex;gap:6px;justify-content:center;padding:14px;flex-wrap:wrap;}
-  .step-dot{width:8px;height:8px;border-radius:50%;background:var(--line);cursor:pointer;border:none;padding:0;}
-  .step-dot.active{background:var(--violet);}
+  .ctrl-btn.play{width:46px;height:46px;background:var(--violet);color:#0E1120;border:none;font-size:1.1rem;}
+  .ctrl-btn.play:hover{background:var(--violet-bright);}
+  .step-count{font-size:0.8rem;color:var(--muted);white-space:nowrap;min-width:40px;text-align:center;}
 
   .disclaimer{margin-top:24px;padding:16px 18px;border:1px solid var(--line);border-radius:8px;color:var(--muted);font-size:0.83rem;line-height:1.55;}
   .disclaimer strong{color:var(--text);}
@@ -97,16 +121,20 @@
     <p class="sub">Un guide animé, étape par étape, pour te débrouiller seul.</p>
 
     <div class="player">
-      <div class="screen">
+      <div class="segments" id="segments"></div>
 
-        <div class="frame active" data-title="Bienvenue" data-text="On va voir ensemble, étape par étape, comment rejoindre le canal Telegram XAU Guardian puis suivre ton premier signal jusqu'au placement d'un ordre.">
-          <div class="mock" style="text-align:center;">
-            <div style="font-size:2rem;">🛡️</div>
-            <div style="margin-top:10px;font-weight:600;">XAU Guardian</div>
+      <div class="screen" id="screen">
+
+        <div class="frame active" data-glow="rgba(139,124,246,0.22)" data-title="Bienvenue" data-text="On va voir ensemble, étape par étape, comment rejoindre le canal Telegram XAU Guardian puis suivre ton premier signal jusqu'au placement d'un ordre.">
+          <div class="center-card">
+            <div class="big-emoji">🛡️</div>
+            <div class="title">XAU Guardian</div>
+            <div class="note">C'est parti</div>
           </div>
         </div>
 
-        <div class="frame" data-title="Étape 1 — Rejoindre le canal Telegram" data-text="Sur le site, clique sur le bouton 📢 Telegram (visible dans le menu et sur la page d'accueil). Telegram s'ouvre avec le canal XAU Guardian.">
+        <div class="frame" data-glow="rgba(42,171,238,0.22)" data-title="Étape 1 — Rejoindre le canal Telegram" data-text="Sur le site, clique sur le bouton 📢 Telegram (visible dans le menu et sur la page d'accueil). Telegram s'ouvre avec le canal XAU Guardian.">
+          <div class="step-chip">Étape 1 / 8</div>
           <div class="mock">
             <div class="mock-head"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
             <div class="tg-bubble">📢 XAU Guardian</div>
@@ -114,7 +142,8 @@
           </div>
         </div>
 
-        <div class="frame" data-title="Étape 2 — Créer ton compte" data-text="Retourne sur le site, clique sur 'Créer un compte', renseigne un e-mail et un mot de passe. C'est gratuit et prend quelques secondes.">
+        <div class="frame" data-glow="rgba(139,124,246,0.22)" data-title="Étape 2 — Créer ton compte" data-text="Retourne sur le site, clique sur 'Créer un compte', renseigne un e-mail et un mot de passe. C'est gratuit et prend quelques secondes.">
+          <div class="step-chip">Étape 2 / 8</div>
           <div class="mock">
             <div class="mock-head"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
             <div class="field-mock">📧 ton-email@exemple.com</div>
@@ -123,7 +152,8 @@
           </div>
         </div>
 
-        <div class="frame" data-title="Étape 3 — Ton tableau de bord" data-text="Une fois connecté, tu arrives sur ton tableau de bord avec tous les outils accessibles en un clic.">
+        <div class="frame" data-glow="rgba(139,124,246,0.18)" data-title="Étape 3 — Ton tableau de bord" data-text="Une fois connecté, tu arrives sur ton tableau de bord avec tous les outils accessibles en un clic.">
+          <div class="step-chip">Étape 3 / 8</div>
           <div class="mock">
             <div class="mock-head"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
             <div class="grid-mock">
@@ -135,7 +165,8 @@
           </div>
         </div>
 
-        <div class="frame" data-title="Étape 4 — Lancer une analyse" data-text="Ouvre le générateur de niveaux, laisse 'XAU/USD', choisis un horizon, puis clique sur Analyser.">
+        <div class="frame" data-glow="rgba(139,124,246,0.22)" data-title="Étape 4 — Lancer une analyse" data-text="Ouvre le générateur de niveaux, laisse 'XAU/USD', choisis un horizon, puis clique sur Analyser.">
+          <div class="step-chip">Étape 4 / 8</div>
           <div class="mock">
             <div class="mock-head"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
             <div class="field-mock">XAU/USD</div>
@@ -143,7 +174,8 @@
           </div>
         </div>
 
-        <div class="frame" data-title="Étape 5 — Lire le résultat" data-text="Si une rupture est confirmée, tu obtiens une entrée, un stop, et deux objectifs. Note bien ces trois chiffres.">
+        <div class="frame" data-glow="rgba(52,211,153,0.2)" data-title="Étape 5 — Lire le résultat" data-text="Si une rupture est confirmée, tu obtiens une entrée, un stop, et deux objectifs. Note bien ces trois chiffres.">
+          <div class="step-chip">Étape 5 / 8</div>
           <div class="mock">
             <div class="mock-head"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
             <div class="levels-mock mono">
@@ -154,7 +186,8 @@
           </div>
         </div>
 
-        <div class="frame" data-title="Étape 6 — Calculer ta taille de position" data-text="Avant de trader, ouvre le calculateur : renseigne ton capital, ton risque en %, et la distance jusqu'au stop obtenue à l'étape précédente.">
+        <div class="frame" data-glow="rgba(139,124,246,0.2)" data-title="Étape 6 — Calculer ta taille de position" data-text="Avant de trader, ouvre le calculateur : renseigne ton capital, ton risque en %, et la distance jusqu'au stop obtenue à l'étape précédente.">
+          <div class="step-chip">Étape 6 / 8</div>
           <div class="mock">
             <div class="mock-head"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
             <div class="field-mock">Capital : 1000</div>
@@ -163,7 +196,8 @@
           </div>
         </div>
 
-        <div class="frame" data-title="Étape 7 — Placer l'ordre sur ta plateforme" data-text="Ouvre ta plateforme de trading (MT5 ou autre), sélectionne XAUUSD, saisis le prix d'entrée, le stop et l'objectif obtenus, avec la taille calculée à l'étape précédente.">
+        <div class="frame" data-glow="rgba(52,211,153,0.2)" data-title="Étape 7 — Placer l'ordre sur ta plateforme" data-text="Ouvre ta plateforme de trading (MT5 ou autre), sélectionne XAUUSD, saisis le prix d'entrée, le stop et l'objectif obtenus, avec la taille calculée à l'étape précédente.">
+          <div class="step-chip">Étape 7 / 8</div>
           <div class="mock broker-mock">
             <div class="mock-head"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
             <div class="field-mock">Symbole : XAUUSD</div>
@@ -172,17 +206,17 @@
           </div>
         </div>
 
-        <div class="frame" data-title="Rappel important" data-text="Aucun de ces outils ne garantit un résultat. Le trading comporte un risque réel de perte en capital. Ne risque jamais plus que ce que tu peux te permettre de perdre.">
-          <div class="mock" style="text-align:center;">
-            <div style="font-size:1.8rem;">⚠️</div>
-            <div style="margin-top:10px;color:var(--muted);font-size:0.85rem;">Ce n'est pas un conseil financier.</div>
+        <div class="frame" data-glow="rgba(248,113,113,0.2)" data-title="Rappel important" data-text="Aucun de ces outils ne garantit un résultat. Le trading comporte un risque réel de perte en capital. Ne risque jamais plus que ce que tu peux te permettre de perdre.">
+          <div class="center-card">
+            <div class="big-emoji">⚠️</div>
+            <div class="title">Ce n'est pas un conseil financier.</div>
           </div>
         </div>
 
-        <div class="frame" data-title="Tu es prêt !" data-text="Tu peux maintenant te débrouiller seul : le canal Telegram, le générateur de niveaux, le calculateur, et l'assistant IA en cas de doute.">
-          <div class="mock" style="text-align:center;">
-            <div style="font-size:2rem;">✅</div>
-            <div style="margin-top:10px;font-weight:600;">Bonne route.</div>
+        <div class="frame" data-glow="rgba(52,211,153,0.22)" data-title="Tu es prêt !" data-text="Tu peux maintenant te débrouiller seul : le canal Telegram, le générateur de niveaux, le calculateur, et l'assistant IA en cas de doute.">
+          <div class="center-card">
+            <div class="big-emoji">✅</div>
+            <div class="title">Bonne route.</div>
           </div>
         </div>
 
@@ -195,47 +229,55 @@
 
       <div class="controls">
         <button class="ctrl-btn" id="prev-btn" aria-label="Précédent">‹</button>
-        <button class="ctrl-btn" id="play-btn" aria-label="Lecture / pause">⏸</button>
-        <div class="progress"><div class="progress-bar" id="progress-bar"></div></div>
-        <span class="step-count" id="step-count">1 / 10</span>
+        <button class="ctrl-btn play" id="play-btn" aria-label="Lecture / pause">⏸</button>
         <button class="ctrl-btn" id="next-btn" aria-label="Suivant">›</button>
+        <span class="step-count" id="step-count">1 / 10</span>
       </div>
-      <div class="dots" id="dots"></div>
     </div>
 
     <div class="disclaimer">
       <strong>Ce n'est pas un conseil financier.</strong> Ce tutoriel montre comment utiliser les outils du site. Il ne garantit aucun résultat de trading.
     </div>
+
+    <p style="margin-top:16px;text-align:center;font-size:0.88rem;color:var(--muted);">
+      Pas encore de compte broker pour l'étape 7 ? <a href="broker.html" style="color:var(--violet-bright);">Ouvre un compte ici</a>.
+    </p>
   </div>
 </main>
 
 <script>
   const frames = Array.from(document.querySelectorAll('.frame'));
+  const screen = document.getElementById('screen');
   const capTitle = document.getElementById('cap-title');
   const capText = document.getElementById('cap-text');
-  const progressBar = document.getElementById('progress-bar');
   const stepCount = document.getElementById('step-count');
-  const dotsContainer = document.getElementById('dots');
+  const segmentsContainer = document.getElementById('segments');
   const playBtn = document.getElementById('play-btn');
 
   let current = 0;
   let playing = true;
   let elapsed = 0;
   const stepDuration = 4500;
-  let timer = null;
 
   frames.forEach((f, i) => {
-    const dot = document.createElement('button');
-    dot.className = 'step-dot' + (i === 0 ? ' active' : '');
-    dot.setAttribute('aria-label', 'Aller à l\'étape ' + (i + 1));
-    dot.addEventListener('click', () => goTo(i));
-    dotsContainer.appendChild(dot);
+    const seg = document.createElement('div');
+    seg.className = 'segment';
+    seg.innerHTML = '<div class="segment-fill"></div>';
+    seg.addEventListener('click', () => goTo(i));
+    segmentsContainer.appendChild(seg);
   });
-  const dots = Array.from(dotsContainer.children);
+  const segments = Array.from(segmentsContainer.children);
 
   function render(){
     frames.forEach((f, i) => f.classList.toggle('active', i === current));
-    dots.forEach((d, i) => d.classList.toggle('active', i === current));
+    screen.style.setProperty('--glow', frames[current].dataset.glow || 'rgba(139,124,246,0.16)');
+    segments.forEach((s, i) => {
+      s.classList.toggle('done', i < current);
+      s.classList.toggle('current', i === current);
+      const fill = s.querySelector('.segment-fill');
+      if (i < current) fill.style.width = '100%';
+      else if (i > current) fill.style.width = '0%';
+    });
     capTitle.textContent = frames[current].dataset.title;
     capText.textContent = frames[current].dataset.text;
     stepCount.textContent = (current + 1) + ' / ' + frames.length;
@@ -250,12 +292,13 @@
   function tick(){
     if (!playing) return;
     elapsed += 100;
-    progressBar.style.width = Math.min(100, (elapsed / stepDuration) * 100) + '%';
+    const fill = segments[current].querySelector('.segment-fill');
+    fill.style.width = Math.min(100, (elapsed / stepDuration) * 100) + '%';
     if (elapsed >= stepDuration){
       goTo(current + 1);
     }
   }
-  timer = setInterval(tick, 100);
+  setInterval(tick, 100);
 
   document.getElementById('next-btn').addEventListener('click', () => goTo(current + 1));
   document.getElementById('prev-btn').addEventListener('click', () => goTo(current - 1));
